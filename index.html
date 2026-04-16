@@ -1,0 +1,2595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 FAN ART STUDIO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            carbon: '#0a0a0a',
+            panel: '#111111',
+            card: '#1a1a1a',
+            border: '#2a2a2a',
+            red: { DEFAULT: '#E8002D', hover: '#ff1a45' },
+            gold: '#C9A84C',
+            teal: '#00D2BE',
+          },
+          fontFamily: {
+            orbitron: ['Orbitron', 'sans-serif'],
+            mono: ['IBM Plex Mono', 'monospace'],
+            inter: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0a0a0a;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px);
+      min-height: 100vh;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #111; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #E8002D; }
+
+    .tab-active {
+      border-bottom: 2px solid #E8002D;
+      color: #fff;
+    }
+    .tab-inactive {
+      border-bottom: 2px solid transparent;
+      color: #555;
+    }
+    .pill-active {
+      background: #E8002D;
+      color: #fff;
+    }
+    .pill-inactive {
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #888;
+    }
+    .card-hover:hover {
+      border-left: 3px solid #E8002D !important;
+      border-color: #3a3a3a;
+    }
+    .status-draft     { background: #333; color: #aaa; }
+    .status-prompt_ready  { background: #1a3a5c; color: #60a5fa; }
+    .status-image_uploaded { background: #3a2800; color: #fbbf24; }
+    .status-approved  { background: #0d2e18; color: #34d399; }
+
+    .fade-in { animation: fadeIn 0.25s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .pulse-once { animation: pulseOnce 0.6s ease; }
+    @keyframes pulseOnce { 0%,100% { background-color: #E8002D; } 50% { background-color: #ff4d6d; } }
+
+    input[type="color"] { -webkit-appearance: none; padding: 0; border: none; cursor: pointer; }
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
+
+    .connect-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot-ok    { background: #34d399; box-shadow: 0 0 6px #34d399; }
+    .dot-error { background: #E8002D; box-shadow: 0 0 6px #E8002D; }
+    .dot-idle  { background: #555; }
+    .dot-loading { background: #C9A84C; animation: blink 0.8s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      background: #1a1a1a; border: 1px solid #2a2a2a;
+      padding: 12px 20px; border-radius: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 13px;
+      color: #fff; opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .toast.show { opacity: 1; }
+    .toast.success { border-left: 3px solid #34d399; }
+    .toast.error   { border-left: 3px solid #E8002D; }
+    .toast.info    { border-left: 3px solid #C9A84C; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 1000; display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-box {
+      background: #111; border: 1px solid #2a2a2a;
+      border-radius: 8px; max-width: 900px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+    }
+
+    select, input[type="text"], input[type="number"], input[type="password"], textarea {
+      background: #111 !important;
+      border: 1px solid #2a2a2a !important;
+      color: #e0e0e0 !important;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, textarea:focus {
+      border-color: #E8002D !important;
+    }
+    select option { background: #111; }
+
+    .stale-banner { background: #3a2800; border: 1px solid #C9A84C33; color: #C9A84C; }
+  </style>
+</head>
+<body class="font-inter text-gray-200">
+
+<!-- ════════════════════════════════════════════
+     TOAST
+════════════════════════════════════════════ -->
+<div id="toast" class="toast"></div>
+
+<!-- ════════════════════════════════════════════
+     MODAL
+════════════════════════════════════════════ -->
+<div id="modal" class="modal-backdrop hidden" onclick="closeModalOnBackdrop(event)">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CROP MODAL
+════════════════════════════════════════════ -->
+<div id="crop-modal" class="modal-backdrop hidden" style="z-index:1100">
+  <div class="bg-[#111] border border-[#2a2a2a] rounded-lg w-full" style="max-width:960px;max-height:95vh;overflow-y:auto">
+    <div class="p-4 border-b border-[#2a2a2a] flex items-center justify-between gap-4">
+      <div>
+        <div class="font-orbitron text-sm font-bold text-white">✂ CROP DESIGN ELEMENTS</div>
+        <div class="font-mono text-xs text-[#555] mt-0.5">Draw boxes to mark regions — Front (red) · Back (blue) · Sleeve (gold). Each region is saved as a separate file.</div>
+      </div>
+      <button onclick="closeCropModal()" class="text-[#555] hover:text-white font-mono text-xl shrink-0">✕</button>
+    </div>
+    <!-- Image selector strip -->
+    <div id="crop-img-strip" class="px-4 pt-3 pb-0 border-b border-[#1e1e1e] hidden">
+      <div class="font-mono text-[10px] text-[#555] uppercase tracking-wider mb-2">Select image to crop:</div>
+      <div id="crop-img-thumbs" class="flex gap-2 overflow-x-auto pb-3"></div>
+    </div>
+    <div class="p-4 flex gap-4 items-center flex-wrap border-b border-[#1e1e1e]">
+      <span class="font-mono text-xs text-[#555] uppercase tracking-wider">Region type:</span>
+      <button onclick="setCropType('front')" id="crop-type-front" class="crop-type-btn font-orbitron text-xs px-3 py-1.5 rounded uppercase tracking-wider border border-[#E8002D] text-[#E8002D] bg-[#E8002D22]">■ FRONT</button>
+      <button onclick="setCropType('back')" id="crop-type-back" class="crop-type-btn font-orbitron text-xs px-3 py-1.5 rounded uppercase tracking-wider border border-[#2a2a2a] text-[#555]">■ BACK</button>
+      <button onclick="setCropType('sleeve')" id="crop-type-sleeve" class="crop-type-btn font-orbitron text-xs px-3 py-1.5 rounded uppercase tracking-wider border border-[#2a2a2a] text-[#555]">■ SLEEVE</button>
+      <button onclick="clearCropRegions()" class="ml-auto font-mono text-xs border border-[#2a2a2a] px-3 py-1.5 text-[#888] hover:text-white hover:border-[#E8002D] rounded transition-colors">CLEAR ALL</button>
+    </div>
+    <div class="p-4">
+      <div class="relative inline-block w-full" id="crop-canvas-wrap">
+        <canvas id="crop-canvas" class="w-full rounded border border-[#2a2a2a] cursor-crosshair" style="display:block"></canvas>
+      </div>
+      <div id="crop-regions-list" class="mt-3 space-y-1 font-mono text-xs text-[#555]"></div>
+    </div>
+    <div class="p-4 border-t border-[#2a2a2a] flex gap-3 justify-end">
+      <p class="flex-1 font-mono text-[10px] text-[#444] self-center">Crops saved as PNG — run through <span class="text-[#C9A84C]">remove.bg</span> or similar to remove the shirt background before printing.</p>
+      <button onclick="saveCrops()" class="bg-[#E8002D] hover:bg-[#ff1a45] text-white font-orbitron text-xs font-bold py-2 px-6 rounded uppercase tracking-wider transition-colors">SAVE CROPS</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     STALE DATA BANNER
+════════════════════════════════════════════ -->
+<div id="stale-banner" class="hidden stale-banner text-xs font-mono px-4 py-2 text-center">
+  ⚠ Showing cached data — GitHub API unavailable. Changes may not be saved.
+</div>
+
+<!-- ════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════ -->
+<header class="border-b border-[#2a2a2a] bg-[#111111]">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-1 h-8 bg-[#E8002D]"></div>
+      <h1 class="font-orbitron text-xl font-black tracking-widest text-white">
+        F1 <span class="text-[#E8002D]">FAN ART</span> STUDIO
+      </h1>
+      <span class="text-[#2a2a2a] text-lg">|</span>
+      <span class="font-mono text-xs text-[#555] tracking-wider cursor-default select-none" onclick="handleDevClick()" title="">DESIGN OPERATIONS v1.0</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <!-- User Selector -->
+      <div class="flex items-center gap-2">
+        <span class="font-mono text-xs text-[#555] uppercase tracking-wider">PILOT</span>
+        <select id="user-select" class="font-orbitron text-xs font-semibold px-3 py-1.5 uppercase tracking-wider cursor-pointer">
+          <option value="">— SELECT —</option>
+          <option value="Ayush">AYUSH</option>
+          <option value="Anagh">ANAGH</option>
+          <option value="Vanshika">VANSHIKA</option>
+        </select>
+      </div>
+      <!-- Connection status -->
+      <div class="flex items-center gap-2">
+        <span id="connect-dot" class="connect-dot dot-idle"></span>
+        <span id="connect-label" class="font-mono text-xs text-[#555]">NOT CONNECTED</span>
+      </div>
+      <!-- Config toggle -->
+      <button onclick="toggleConfig()" class="font-mono text-xs border border-[#2a2a2a] px-3 py-1.5 text-[#888] hover:border-[#E8002D] hover:text-white transition-colors rounded">
+        ⚙ CONFIG
+      </button>
+    </div>
+  </div>
+
+  <!-- GitHub Config Panel -->
+  <div id="config-panel" class="hidden border-t border-[#2a2a2a] bg-[#0d0d0d]">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+        <div>
+          <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">GitHub PAT</label>
+          <!-- ⬇️ REPLACE THE PLACEHOLDER BELOW WITH YOUR ACTUAL PAT AT RUNTIME — NEVER HARDCODE -->
+          <input type="password" id="cfg-pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+            class="w-full px-3 py-2 font-mono text-sm" />
+        </div>
+        <div>
+          <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">Repo Owner</label>
+          <input type="text" id="cfg-owner" placeholder="ayushgupta97" class="w-full px-3 py-2 font-mono text-sm" />
+        </div>
+        <div>
+          <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">Repo Name</label>
+          <input type="text" id="cfg-repo" placeholder="f1-designs" class="w-full px-3 py-2 font-mono text-sm" />
+        </div>
+        <div class="flex gap-2">
+          <button onclick="connectGitHub()" class="flex-1 bg-[#E8002D] hover:bg-[#ff1a45] text-white font-orbitron text-xs font-bold py-2 px-4 rounded uppercase tracking-wider transition-colors">
+            CONNECT
+          </button>
+          <button onclick="clearConfig()" class="border border-[#2a2a2a] text-[#555] hover:text-white font-mono text-xs py-2 px-3 rounded transition-colors">
+            CLR
+          </button>
+        </div>
+      </div>
+      <p class="mt-2 font-mono text-xs text-[#444]">
+        🔒 Your PAT is stored in <code class="text-[#C9A84C]">sessionStorage</code> only — cleared when you close this tab. Never sent anywhere except <code class="text-[#C9A84C]">api.github.com</code>.
+      </p>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════
+     TAB BAR
+════════════════════════════════════════════ -->
+<div class="border-b border-[#2a2a2a] bg-[#111111] sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 flex gap-0">
+    <button id="tab-btn-1" onclick="switchTab(1)"
+      class="font-orbitron text-xs font-bold uppercase tracking-widest px-6 py-4 tab-active transition-colors">
+      ⚡ PROMPT GENERATOR
+    </button>
+    <button id="tab-btn-2" onclick="switchTab(2)"
+      class="font-orbitron text-xs font-bold uppercase tracking-widest px-6 py-4 tab-inactive transition-colors">
+      🏁 DESIGN VAULT
+    </button>
+    <button id="tab-btn-3" onclick="switchTab(3)"
+      class="font-orbitron text-xs font-bold uppercase tracking-widest px-6 py-4 tab-inactive transition-colors">
+      ❓ HOW TO
+    </button>
+    <button id="tab-btn-4" onclick="switchTab(4)"
+      class="hidden font-orbitron text-xs font-bold uppercase tracking-widest px-6 py-4 tab-inactive transition-colors text-[#E8002D]">
+      ⚠ JSON EDITOR
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
+<main class="max-w-7xl mx-auto px-4 py-6">
+
+  <!-- ─── TAB 1: PROMPT GENERATOR ─── -->
+  <div id="tab-1" class="fade-in">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- LEFT COLUMN: Controls -->
+      <div class="space-y-5">
+
+        <!-- Step 1: Driver & Product -->
+        <section class="bg-[#111] border border-[#2a2a2a] rounded-lg p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="font-orbitron text-xs font-bold text-[#E8002D] tracking-widest">STEP 01</span>
+            <span class="text-[#2a2a2a]">—</span>
+            <span class="font-orbitron text-xs font-semibold text-white tracking-wider uppercase">Select Driver & Product</span>
+          </div>
+
+          <!-- Edition Mode Toggle -->
+          <div class="flex gap-2 mb-4" id="edition-mode-pills">
+            <button onclick="setEditionMode('driver')" data-mode="driver"
+              class="edition-pill flex-1 pill-active font-orbitron text-xs py-2 px-3 rounded uppercase tracking-wider transition-all">
+              🏎 DRIVER EDITION
+            </button>
+            <button onclick="setEditionMode('championship')" data-mode="championship"
+              class="edition-pill flex-1 pill-inactive font-orbitron text-xs py-2 px-3 rounded uppercase tracking-wider transition-all border-[#C9A84C33]">
+              ★ CHAMPIONSHIP EDITION
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div>
+              <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">Team</label>
+              <select id="team-select" onchange="onTeamChange()" class="w-full px-3 py-2 text-sm font-inter">
+                <option value="">All Teams</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">Driver</label>
+              <select id="driver-select" onchange="onDriverChange()" class="w-full px-3 py-2 text-sm font-inter">
+                <option value="">— Select Driver —</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Product Type -->
+          <div>
+            <label class="block font-mono text-xs text-[#555] mb-2 uppercase tracking-wider">Product Type</label>
+            <div class="flex gap-2 flex-wrap" id="product-pills">
+              <button onclick="selectProduct('tshirt')" data-product="tshirt" class="product-pill pill-active font-orbitron text-xs px-4 py-2 rounded-full uppercase tracking-wider transition-all">T-SHIRT</button>
+              <button onclick="selectProduct('hoodie')" data-product="hoodie" class="product-pill pill-inactive font-orbitron text-xs px-4 py-2 rounded-full uppercase tracking-wider transition-all">HOODIE</button>
+            </div>
+          </div>
+
+          <!-- Assigned to badge -->
+          <div id="assignment-badge" class="hidden mt-3 flex items-center gap-2">
+            <span class="font-mono text-xs text-[#555]">ASSIGNED TO:</span>
+            <span id="assignment-name" class="font-orbitron text-xs font-bold text-[#C9A84C] border border-[#C9A84C33] px-3 py-1 rounded-full uppercase tracking-wider"></span>
+          </div>
+        </section>
+
+        <!-- Step 2: Prompt Form -->
+        <section class="bg-[#111] border border-[#2a2a2a] rounded-lg p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="font-orbitron text-xs font-bold text-[#E8002D] tracking-widest">STEP 02</span>
+            <span class="text-[#2a2a2a]">—</span>
+            <span class="font-orbitron text-xs font-semibold text-white tracking-wider uppercase">Prompt Parameters</span>
+          </div>
+
+          <div class="space-y-3" id="prompt-form">
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-mono text-xs text-[#555] mb-1">LAST NAME</label>
+                <input type="text" id="f-last-name" oninput="assemblePrompt()" placeholder="Hamilton" class="w-full px-3 py-2 text-sm" />
+              </div>
+              <div>
+                <label class="block font-mono text-xs text-[#555] mb-1">NUMBER</label>
+                <input type="number" id="f-number" oninput="assemblePrompt()" placeholder="44" class="w-full px-3 py-2 text-sm" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-mono text-xs text-[#555] mb-1">NICKNAME</label>
+              <input type="text" id="f-nickname" oninput="assemblePrompt()" placeholder="THE GOAT" class="w-full px-3 py-2 text-sm" />
+            </div>
+
+            <div>
+              <label class="block font-mono text-xs text-[#555] mb-1">TEAM NAME (BACK TEXT)</label>
+              <input type="text" id="f-team-name" oninput="assemblePrompt()" placeholder="Mercedes" class="w-full px-3 py-2 text-sm" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-mono text-xs text-[#555] mb-1">PRIMARY COLOR</label>
+                <div class="flex gap-2">
+                  <input type="color" id="f-primary-color-picker" oninput="syncColor('primary')" value="#E8002D" class="w-10 h-9 rounded cursor-pointer" />
+                  <input type="text" id="f-primary-color" oninput="syncColorFromText('primary')" placeholder="#E8002D" class="flex-1 px-3 py-2 text-sm font-mono" />
+                </div>
+              </div>
+              <div>
+                <label class="block font-mono text-xs text-[#555] mb-1">SECONDARY COLOR</label>
+                <div class="flex gap-2">
+                  <input type="color" id="f-secondary-color-picker" oninput="syncColor('secondary')" value="#C9A84C" class="w-10 h-9 rounded cursor-pointer" />
+                  <input type="text" id="f-secondary-color" oninput="syncColorFromText('secondary')" placeholder="#C9A84C" class="flex-1 px-3 py-2 text-sm font-mono" />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-mono text-xs text-[#555] mb-1">UNIQUE ELEMENT</label>
+              <textarea id="f-unique-element" oninput="assemblePrompt()" rows="2" placeholder="Rainbow iridescent helmet outline (gold-tinted)" class="w-full px-3 py-2 text-sm resize-none"></textarea>
+            </div>
+
+            <div>
+              <label class="block font-mono text-xs text-[#555] mb-1">FRONT BADGE</label>
+              <textarea id="f-front-badge" oninput="assemblePrompt()" rows="2" placeholder="small embroidered flag patch..." class="w-full px-3 py-2 text-sm resize-none"></textarea>
+            </div>
+
+            <div>
+              <label class="block font-mono text-xs text-[#555] mb-1">BACK GRAPHIC</label>
+              <textarea id="f-back-graphic" oninput="assemblePrompt()" rows="2" placeholder="Detailed helmet illustration in team colors..." class="w-full px-3 py-2 text-sm resize-none"></textarea>
+            </div>
+
+            <div id="champ-years-row">
+              <label class="block font-mono text-xs text-[#555] mb-1">CHAMPIONSHIP YEARS</label>
+              <input type="text" id="f-champ-years" oninput="assemblePrompt()" placeholder="2008 · 2014 · 2015 · 2017 · 2018 · 2019 · 2020" class="w-full px-3 py-2 text-sm font-mono" />
+            </div>
+
+            <div>
+              <label class="block font-mono text-xs text-[#555] mb-1">TEE COLOR</label>
+              <input type="text" id="f-tee-color" oninput="assemblePrompt()" placeholder="Black, White, Washed Grey, Cream..." class="w-full px-3 py-2 text-sm" />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN: Live Prompt Preview -->
+      <div class="space-y-4">
+        <section class="bg-[#111] border border-[#2a2a2a] rounded-lg p-5 h-full flex flex-col">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <span class="font-orbitron text-xs font-bold text-[#E8002D] tracking-widest">STEP 03</span>
+              <span class="text-[#2a2a2a]">—</span>
+              <span class="font-orbitron text-xs font-semibold text-white tracking-wider uppercase">Live Prompt Preview</span>
+            </div>
+            <div id="prompt-version-badge" class="hidden font-mono text-xs text-[#C9A84C] border border-[#C9A84C33] px-2 py-0.5 rounded"></div>
+          </div>
+
+          <textarea id="prompt-preview"
+            class="flex-1 w-full font-mono text-xs text-[#ccc] bg-[#0d0d0d] border border-[#1e1e1e] rounded p-4 resize-none leading-relaxed min-h-[420px]"
+            readonly
+            placeholder="← Fill in driver + product to generate prompt..."></textarea>
+
+          <div class="flex gap-2 mt-4">
+            <button id="copy-btn" onclick="copyPrompt()"
+              class="bg-[#1a1a1a] hover:bg-[#222] border border-[#2a2a2a] hover:border-[#E8002D] text-[#888] hover:text-white font-orbitron text-xs font-bold py-3 px-3 rounded uppercase tracking-wider transition-all">
+              📋 COPY
+            </button>
+            <button id="save-btn" onclick="savePrompt(false)"
+              class="flex-1 bg-[#1a3a5c] hover:bg-[#1e4d7a] border border-[#60a5fa33] text-[#60a5fa] font-orbitron text-xs font-bold py-3 px-3 rounded uppercase tracking-wider transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+              💾 UPDATE
+            </button>
+            <button id="save-new-btn" onclick="savePromptAsNew()"
+              class="flex-1 bg-[#E8002D] hover:bg-[#ff1a45] text-white font-orbitron text-xs font-bold py-3 px-3 rounded uppercase tracking-wider transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+              ✦ NEW VERSION
+            </button>
+          </div>
+
+          <div id="save-status" class="hidden mt-2 font-mono text-xs text-center"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB 2: DESIGN VAULT ─── -->
+  <div id="tab-2" class="hidden fade-in">
+
+    <!-- Filters -->
+    <div class="bg-[#111] border border-[#2a2a2a] rounded-lg p-4 mb-6">
+      <div class="flex flex-wrap gap-4 items-end">
+
+        <!-- Assignee filter -->
+        <div>
+          <label class="block font-mono text-xs text-[#555] mb-2 uppercase tracking-wider">Assignee</label>
+          <div class="flex gap-2" id="assignee-filter-pills">
+            <button onclick="setFilter('assignee','all')" data-val="all" class="assignee-pill pill-active font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">ALL</button>
+            <button onclick="setFilter('assignee','Ayush')" data-val="Ayush" class="assignee-pill pill-inactive font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">AYUSH</button>
+            <button onclick="setFilter('assignee','Anagh')" data-val="Anagh" class="assignee-pill pill-inactive font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">ANAGH</button>
+            <button onclick="setFilter('assignee','Vanshika')" data-val="Vanshika" class="assignee-pill pill-inactive font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">VANSHIKA</button>
+          </div>
+        </div>
+
+        <!-- Status filter -->
+        <div>
+          <label class="block font-mono text-xs text-[#555] mb-2 uppercase tracking-wider">Status</label>
+          <div class="flex gap-2 flex-wrap" id="status-filter-pills">
+            <button onclick="setFilter('status','all')" data-val="all" class="status-pill pill-active font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">ALL</button>
+            <button onclick="setFilter('status','draft')" data-val="draft" class="status-pill pill-inactive font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">DRAFT</button>
+            <button onclick="setFilter('status','prompt_ready')" data-val="prompt_ready" class="status-pill pill-inactive font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">PROMPT READY</button>
+            <button onclick="setFilter('status','image_uploaded')" data-val="image_uploaded" class="status-pill pill-inactive font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">UPLOADED</button>
+            <button onclick="setFilter('status','approved')" data-val="approved" class="status-pill pill-inactive font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">APPROVED</button>
+          </div>
+        </div>
+
+        <!-- Team + Driver filter -->
+        <div class="flex gap-3">
+          <div>
+            <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">Team</label>
+            <select id="vault-team-filter" onchange="onVaultTeamFilter()" class="px-3 py-2 text-sm font-inter">
+              <option value="">All Teams</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">Driver</label>
+            <select id="vault-driver-filter" onchange="state.vaultFilters.driver=$('vault-driver-filter').value; renderVault()" class="px-3 py-2 text-sm font-inter">
+              <option value="">All Drivers</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Edition Mode -->
+        <div>
+          <label class="block font-mono text-xs text-[#555] mb-2 uppercase tracking-wider">Edition</label>
+          <div class="flex gap-2" id="vault-edition-pills">
+            <button onclick="setFilter('edition','all')" data-val="all" class="vault-edition-pill pill-active font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">ALL</button>
+            <button onclick="setFilter('edition','driver')" data-val="driver" class="vault-edition-pill pill-inactive font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">🏎 DRIVER</button>
+            <button onclick="setFilter('edition','championship')" data-val="championship" class="vault-edition-pill pill-inactive font-orbitron text-xs px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">★ CHAMP</button>
+          </div>
+        </div>
+
+        <button onclick="refreshVault()" class="ml-auto font-mono text-xs border border-[#2a2a2a] px-3 py-2 text-[#888] hover:border-[#E8002D] hover:text-white transition-colors rounded">
+          ↻ REFRESH
+        </button>
+      </div>
+    </div>
+
+    <!-- Card Grid -->
+    <div id="vault-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div class="col-span-full text-center font-mono text-xs text-[#333] py-16">
+        Connect to GitHub to load designs
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB 3: HOW TO ─── -->
+  <div id="tab-3" class="hidden fade-in">
+    <div class="max-w-3xl mx-auto space-y-6 pb-12">
+
+      <!-- Hero -->
+      <div class="bg-[#111] border border-[#2a2a2a] rounded-lg p-8 text-center">
+        <div class="font-orbitron text-2xl font-black text-white tracking-widest mb-2">HOW TO USE THIS TOOL</div>
+        <div class="font-mono text-sm text-[#555]">F1 Fan Art Studio — Workflow Guide for Ayush, Anagh & Vanshika</div>
+        <div class="mt-4 w-16 h-px bg-[#E8002D] mx-auto"></div>
+      </div>
+
+      <!-- Key callout -->
+      <div class="border border-[#C9A84C44] bg-[#C9A84C0d] rounded-lg p-5">
+        <div class="flex gap-3">
+          <div class="text-[#C9A84C] text-xl shrink-0">★</div>
+          <div>
+            <div class="font-orbitron text-xs font-bold text-[#C9A84C] uppercase tracking-widest mb-2">The Most Important Thing</div>
+            <div class="font-mono text-sm text-[#ccc] leading-relaxed">
+              The prompt this tool generates is a <span class="text-[#C9A84C] font-bold">starting point</span> — not a final prompt. It gives you a strong, structured foundation based on the driver's data. You're expected to paste it into Midjourney / DALL-E / Ideogram, see what comes out, and then <span class="text-white">refine the prompt yourself</span> based on what looks good or needs fixing.
+            </div>
+            <div class="mt-3 font-mono text-xs text-[#888] leading-relaxed border-l-2 border-[#C9A84C44] pl-3">
+              Upload multiple outputs per version — the tool stores them all. When you find the one you like, mark it approved and use the crop tool to extract print-ready elements.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step by step -->
+      <div class="bg-[#111] border border-[#2a2a2a] rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-[#2a2a2a]">
+          <span class="font-orbitron text-xs font-bold text-white tracking-widest uppercase">The Workflow — Step by Step</span>
+        </div>
+
+        <div class="divide-y divide-[#1e1e1e]">
+
+          <!-- Step 1 -->
+          <div class="p-6 flex gap-5">
+            <div class="shrink-0 w-8 h-8 rounded-full bg-[#E8002D] flex items-center justify-center font-orbitron text-xs font-black text-white">1</div>
+            <div class="space-y-2">
+              <div class="font-orbitron text-sm font-bold text-white">Pick Your Edition Mode</div>
+              <div class="font-mono text-xs text-[#888] leading-relaxed">
+                At the top of the Prompt Generator, choose between <span class="text-white">🏎 Driver Edition</span> (current 2026 grid driver in their current team colours) or <span class="text-[#C9A84C]">★ Championship Edition</span> (champion drivers wearing #1 with crown motif and championship years).
+              </div>
+              <div class="font-mono text-xs text-[#555] bg-[#0d0d0d] px-3 py-2 rounded border border-[#1e1e1e]">
+                Championship Edition: Hamilton (7×) · Verstappen (4×) · Alonso (2×) · Norris (1×). Championship years auto-populate.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="p-6 flex gap-5">
+            <div class="shrink-0 w-8 h-8 rounded-full bg-[#E8002D] flex items-center justify-center font-orbitron text-xs font-black text-white">2</div>
+            <div class="space-y-2">
+              <div class="font-orbitron text-sm font-bold text-white">Select Driver + Product, Tweak Fields</div>
+              <div class="font-mono text-xs text-[#888] leading-relaxed">
+                Filter by team, then pick the driver. The form auto-fills with data — colours, number, nickname, unique graphic element. Pick <span class="text-white">T-Shirt</span> or <span class="text-white">Hoodie</span>.
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                <div class="bg-[#0d0d0d] border border-[#1e1e1e] rounded px-3 py-2">
+                  <div class="font-orbitron text-[10px] text-[#E8002D] mb-1">TEE COLOR</div>
+                  <div class="font-mono text-[11px] text-[#666]">The physical garment — Black, White, Washed Grey, Cream. Separate from design colours.</div>
+                </div>
+                <div class="bg-[#0d0d0d] border border-[#1e1e1e] rounded px-3 py-2">
+                  <div class="font-orbitron text-[10px] text-[#E8002D] mb-1">PRIMARY / SECONDARY</div>
+                  <div class="font-mono text-[11px] text-[#666]">Design colours — team palette used for numbers, streaks, accents. Not the tee colour.</div>
+                </div>
+                <div class="bg-[#0d0d0d] border border-[#1e1e1e] rounded px-3 py-2">
+                  <div class="font-orbitron text-[10px] text-[#E8002D] mb-1">UNIQUE ELEMENT</div>
+                  <div class="font-mono text-[11px] text-[#666]">The circuit layout or helmet graphic identity of this driver's design.</div>
+                </div>
+                <div class="bg-[#0d0d0d] border border-[#1e1e1e] rounded px-3 py-2">
+                  <div class="font-orbitron text-[10px] text-[#E8002D] mb-1">FRONT BADGE / BACK GRAPHIC</div>
+                  <div class="font-mono text-[11px] text-[#666]">Optional extras — auto-filled from driver data. Edit freely. Style direction is baked into the template automatically.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="p-6 flex gap-5">
+            <div class="shrink-0 w-8 h-8 rounded-full bg-[#E8002D] flex items-center justify-center font-orbitron text-xs font-black text-white">3</div>
+            <div class="space-y-2">
+              <div class="font-orbitron text-sm font-bold text-white">Copy → Paste → Generate → Iterate</div>
+              <div class="font-mono text-xs text-[#888] leading-relaxed">
+                Hit <span class="text-white bg-[#1a1a1a] border border-[#2a2a2a] px-2 py-0.5 rounded font-bold">📋 COPY</span> and paste the prompt into your AI tool. The generated prompt is a structured starting point — modify it directly as you iterate.
+              </div>
+              <div class="bg-[#0d0d0d] border border-[#1e1e1e] rounded px-4 py-3 mt-1">
+                <div class="font-orbitron text-[10px] text-white mb-2 uppercase tracking-wider">Primary Tools</div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <div class="font-orbitron text-[10px] text-[#E8002D] mb-1">Artlist AI</div>
+                    <div class="font-mono text-[11px] text-[#666] leading-relaxed">Main image gen tool. Paste the full prompt directly. Use the flat lay / product mockup mode if available.</div>
+                  </div>
+                  <div>
+                    <div class="font-orbitron text-[10px] text-[#E8002D] mb-1">ChatGPT (DALL-E)</div>
+                    <div class="font-mono text-[11px] text-[#666] leading-relaxed">Good for iteration — paste the prompt and ask it to adjust specific elements. "Change the back number to be larger" style edits work well.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="border border-[#E8002D22] bg-[#E8002D0a] rounded px-4 py-3">
+                <div class="font-orbitron text-[10px] text-[#E8002D] mb-1 uppercase tracking-wider">Tips</div>
+                <div class="font-mono text-xs text-[#aaa] leading-relaxed space-y-1">
+                  <div>→ If AI adds official logos: append <span class="text-white">"no logos, no brand marks, no badges"</span></div>
+                  <div>→ For text accuracy in ChatGPT: ask it to <span class="text-white">"keep all text exactly as written"</span></div>
+                  <div>→ Try both tools — Artlist tends to be better for flat lay style, ChatGPT better for quick tweaks</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="p-6 flex gap-5">
+            <div class="shrink-0 w-8 h-8 rounded-full bg-[#E8002D] flex items-center justify-center font-orbitron text-xs font-black text-white">4</div>
+            <div class="space-y-2">
+              <div class="font-orbitron text-sm font-bold text-white">Save Prompt, Upload Multiple Images</div>
+              <div class="font-mono text-xs text-[#888] leading-relaxed">
+                Click <span class="text-[#E8002D] font-bold">✦ NEW VERSION</span> to save the prompt. Then in the <span class="text-white">🏁 DESIGN VAULT</span>, open the design card and upload <span class="text-white">as many image outputs as you want</span> for that version — all are stored. Each image gets a thumbnail in the gallery.
+              </div>
+              <div class="font-mono text-xs text-[#555] bg-[#0d0d0d] px-3 py-2 rounded border border-[#1e1e1e]">
+                You can also create a new version directly from the vault modal (+ NEW VER button) without going back to the generator.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="p-6 flex gap-5">
+            <div class="shrink-0 w-8 h-8 rounded-full bg-[#E8002D] flex items-center justify-center font-orbitron text-xs font-black text-white">5</div>
+            <div class="space-y-2">
+              <div class="font-orbitron text-sm font-bold text-white">Extract Print Elements (Crop Tool)</div>
+              <div class="font-mono text-xs text-[#888] leading-relaxed">
+                Once you have a good design image, use the <span class="text-[#C9A84C] font-bold">✂ CROP ELEMENTS</span> button to extract individual design sections:
+              </div>
+              <div class="space-y-2 mt-1">
+                <div class="flex gap-2 items-start">
+                  <span class="w-2 h-2 rounded-sm shrink-0 mt-1" style="background:#E8002D"></span>
+                  <span class="font-mono text-xs text-[#666]"><span class="text-white">FRONT</span> — mark the left-chest text block and right-chest badge as separate regions</span>
+                </div>
+                <div class="flex gap-2 items-start">
+                  <span class="w-2 h-2 rounded-sm shrink-0 mt-1" style="background:#0090FF"></span>
+                  <span class="font-mono text-xs text-[#666]"><span class="text-white">BACK</span> — mark the full back design, hero number, and graphic overlay as separate regions</span>
+                </div>
+                <div class="flex gap-2 items-start">
+                  <span class="w-2 h-2 rounded-sm shrink-0 mt-1" style="background:#C9A84C"></span>
+                  <span class="font-mono text-xs text-[#666]"><span class="text-white">SLEEVE</span> — optional sleeve detail if present</span>
+                </div>
+              </div>
+              <div class="border border-[#C9A84C33] bg-[#C9A84C08] rounded px-3 py-2 mt-2">
+                <div class="font-mono text-xs text-[#C9A84C] mb-1">After cropping:</div>
+                <div class="font-mono text-xs text-[#666]">Crops save to <span class="text-white">images/crops/</span> in GitHub, named e.g. <span class="text-white">ferrari_hamilton_driver_v2_back_1.png</span> — version is part of the filename so crops from different design attempts never clash. The cropped images appear in the vault modal under "Cropped Elements". Run them through <span class="text-white">remove.bg</span> or <span class="text-white">Adobe Express</span> to remove the shirt background before sending to print.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 6 -->
+          <div class="p-6 flex gap-5">
+            <div class="shrink-0 w-8 h-8 rounded-full bg-[#34d399] flex items-center justify-center font-orbitron text-xs font-black text-black">✓</div>
+            <div class="space-y-2">
+              <div class="font-orbitron text-sm font-bold text-white">Approve & Track</div>
+              <div class="font-mono text-xs text-[#888] leading-relaxed">
+                Once a version has at least one image and looks good, open the modal and click <span class="text-[#34d399] font-bold">✓ APPROVE</span>. The card turns green. Use the version dropdown to compare attempts and set the best as active.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignments table -->
+      <div class="bg-[#111] border border-[#2a2a2a] rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-[#2a2a2a]">
+          <span class="font-orbitron text-xs font-bold text-white tracking-widest uppercase">Driver Assignments</span>
+        </div>
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <div class="font-orbitron text-xs font-bold text-[#C9A84C] mb-3 uppercase tracking-wider">Ayush</div>
+            <div class="space-y-1.5 font-mono text-xs text-[#666]">
+              <div>Hamilton · Ferrari</div>
+              <div>Verstappen · Red Bull</div>
+              <div>Norris · McLaren</div>
+              <div>Alonso · Aston Martin</div>
+              <div class="text-[#C9A84C] mt-2">★ Hamilton Champ Ed.</div>
+              <div class="text-[#C9A84C]">★ Verstappen Champ Ed.</div>
+              <div class="text-[#C9A84C]">★ Norris Champ Ed.</div>
+              <div class="text-[#C9A84C]">★ Alonso Champ Ed.</div>
+            </div>
+          </div>
+          <div>
+            <div class="font-orbitron text-xs font-bold text-[#60a5fa] mb-3 uppercase tracking-wider">Anagh</div>
+            <div class="space-y-1.5 font-mono text-xs text-[#666]">
+              <div>Leclerc · Ferrari</div>
+              <div>Russell · Mercedes</div>
+              <div>Piastri · McLaren</div>
+              <div>Hadjar · Red Bull</div>
+              <div>Gasly · Alpine</div>
+              <div>Colapinto · Alpine</div>
+              <div>Hülkenberg · Audi</div>
+              <div>Bortoleto · Audi</div>
+            </div>
+          </div>
+          <div>
+            <div class="font-orbitron text-xs font-bold text-[#f0abfc] mb-3 uppercase tracking-wider">Vanshika</div>
+            <div class="space-y-1.5 font-mono text-xs text-[#666]">
+              <div>Antonelli · Mercedes</div>
+              <div>Lawson · Racing Bulls</div>
+              <div>Lindblad · Racing Bulls</div>
+              <div>Sainz · Williams</div>
+              <div>Albon · Williams</div>
+              <div>Stroll · Aston Martin</div>
+              <div>Ocon · Haas</div>
+              <div>Bearman · Haas</div>
+              <div>Pérez · Cadillac</div>
+              <div>Bottas · Cadillac</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="bg-[#111] border border-[#2a2a2a] rounded-lg p-6 space-y-3">
+        <div class="font-orbitron text-xs font-bold text-white tracking-widest uppercase mb-4">Quick Tips</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="flex gap-3 items-start">
+            <span class="text-[#E8002D] shrink-0">→</span>
+            <span class="font-mono text-xs text-[#666] leading-relaxed">The <span class="text-white">UNIQUE ELEMENT</span> field is the identity of each design — the circuit layout or helmet graphic. Don't remove it, but you can rephrase it for different effects.</span>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="text-[#E8002D] shrink-0">→</span>
+            <span class="font-mono text-xs text-[#666] leading-relaxed">Style direction is built into the template — you don't need to add mood/vibe instructions. Just focus on the driver-specific fields.</span>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="text-[#E8002D] shrink-0">→</span>
+            <span class="font-mono text-xs text-[#666] leading-relaxed">Upload <span class="text-white">multiple images</span> per version — different AI outputs, colour experiments, etc. They all live in the same version card.</span>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="text-[#E8002D] shrink-0">→</span>
+            <span class="font-mono text-xs text-[#666] leading-relaxed">Crop tool saves to <span class="text-white">images/crops/</span> — named by team, driver, edition, <span class="text-white">version</span>, region type, and index (e.g. <span class="text-[#C9A84C]">ferrari_hamilton_driver_v1_front_1.png</span>). Version is included so crops from different design attempts never overwrite each other.</span>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="text-[#E8002D] shrink-0">→</span>
+            <span class="font-mono text-xs text-[#666] leading-relaxed">Base prompt templates can be edited in the hidden JSON editor (triple-click "DESIGN OPERATIONS v1.0" in the header to unlock).</span>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="text-[#E8002D] shrink-0">→</span>
+            <span class="font-mono text-xs text-[#666] leading-relaxed">Images above 5MB upload fine but slowly. Resize to under 2MB before uploading for best performance.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── TAB 4: JSON EDITOR (hidden dev tab) ─── -->
+  <div id="tab-4" class="hidden fade-in space-y-5">
+    <div class="flex items-center gap-3 mb-2">
+      <div class="w-1 h-6 bg-[#E8002D]"></div>
+      <span class="font-orbitron text-sm font-bold text-white tracking-wider">JSON EDITOR</span>
+      <span class="font-mono text-xs text-[#555]">— direct file editor · changes commit to GitHub</span>
+    </div>
+
+    <!-- drivers.json -->
+    <section class="bg-[#111] border border-[#2a2a2a] rounded-lg p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-xs text-[#C9A84C]">db/drivers.json</span>
+          <span id="drivers-json-status" class="font-mono text-xs text-[#555]"></span>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="validateJSON('drivers')" class="font-mono text-xs border border-[#2a2a2a] px-3 py-1.5 text-[#888] hover:border-[#C9A84C] hover:text-[#C9A84C] transition-colors rounded">VALIDATE</button>
+          <button onclick="formatJSON('drivers')" class="font-mono text-xs border border-[#2a2a2a] px-3 py-1.5 text-[#888] hover:border-[#00D2BE] hover:text-[#00D2BE] transition-colors rounded">FORMAT</button>
+          <button onclick="saveJSONFile('drivers')" class="font-mono text-xs bg-[#E8002D] hover:bg-[#ff1a45] text-white px-3 py-1.5 rounded transition-colors">SAVE TO GITHUB</button>
+        </div>
+      </div>
+      <textarea id="json-editor-drivers" spellcheck="false"
+        class="w-full font-mono text-xs bg-[#0d0d0d] border border-[#1e1e1e] rounded p-4 resize-y leading-relaxed"
+        style="min-height: 320px; tab-size: 2;"></textarea>
+    </section>
+
+    <!-- designs.json -->
+    <section class="bg-[#111] border border-[#2a2a2a] rounded-lg p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-xs text-[#C9A84C]">db/designs.json</span>
+          <span id="designs-json-status" class="font-mono text-xs text-[#555]"></span>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="validateJSON('designs')" class="font-mono text-xs border border-[#2a2a2a] px-3 py-1.5 text-[#888] hover:border-[#C9A84C] hover:text-[#C9A84C] transition-colors rounded">VALIDATE</button>
+          <button onclick="formatJSON('designs')" class="font-mono text-xs border border-[#2a2a2a] px-3 py-1.5 text-[#888] hover:border-[#00D2BE] hover:text-[#00D2BE] transition-colors rounded">FORMAT</button>
+          <button onclick="saveJSONFile('designs')" class="font-mono text-xs bg-[#E8002D] hover:bg-[#ff1a45] text-white px-3 py-1.5 rounded transition-colors">SAVE TO GITHUB</button>
+        </div>
+      </div>
+      <textarea id="json-editor-designs" spellcheck="false"
+        class="w-full font-mono text-xs bg-[#0d0d0d] border border-[#1e1e1e] rounded p-4 resize-y leading-relaxed"
+        style="min-height: 280px; tab-size: 2;"></textarea>
+    </section>
+
+    <!-- templates.json -->
+    <section class="bg-[#111] border border-[#2a2a2a] rounded-lg p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-xs text-[#C9A84C]">db/templates.json</span>
+          <span id="templates-json-status" class="font-mono text-xs text-[#555]"></span>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="resetTemplateToDefault()" class="font-mono text-xs border border-[#2a2a2a] px-3 py-1.5 text-[#888] hover:border-[#555] hover:text-white transition-colors rounded">RESET DEFAULT</button>
+          <button onclick="saveTemplateFile()" class="font-mono text-xs bg-[#E8002D] hover:bg-[#ff1a45] text-white px-3 py-1.5 rounded transition-colors">SAVE TO GITHUB</button>
+        </div>
+      </div>
+      <!-- Selector -->
+      <div class="flex gap-3 mb-3 flex-wrap items-center">
+        <div>
+          <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">Edition</label>
+          <select id="tmpl-edition" onchange="switchTemplateEditor()" class="px-3 py-2 text-sm font-mono">
+            <option value="driver">Driver Edition</option>
+            <option value="championship">Championship Edition</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">Product</label>
+          <select id="tmpl-product" onchange="switchTemplateEditor()" class="px-3 py-2 text-sm font-mono">
+            <option value="tshirt">T-Shirt</option>
+            <option value="hoodie">Hoodie</option>
+            <option value="cap">Cap</option>
+            <option value="tote">Tote</option>
+          </select>
+        </div>
+        <div class="flex-1 min-w-[200px]">
+          <label class="block font-mono text-xs text-[#555] mb-1 uppercase tracking-wider">Available Tokens</label>
+          <div class="font-mono text-[10px] text-[#444] leading-relaxed">
+            {{LAST_NAME}} {{NUMBER}} {{NICKNAME}} {{TEAM_NAME}} {{TEE_COLOR}}<br>
+            {{PRIMARY_COLOR}} {{SECONDARY_COLOR}} {{UNIQUE_ELEMENT}}<br>
+            {{FRONT_BADGE}} {{BACK_GRAPHIC}} {{CHAMP_YEARS}}
+          </div>
+        </div>
+      </div>
+      <textarea id="template-editor-content" spellcheck="false" rows="16"
+        class="w-full font-mono text-xs bg-[#0d0d0d] border border-[#1e1e1e] rounded p-4 resize-y leading-relaxed"
+        style="tab-size: 2;" placeholder="Select edition + product above to load template..."></textarea>
+    </section>
+
+    <!-- assignments.json -->
+    <section class="bg-[#111] border border-[#2a2a2a] rounded-lg p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-xs text-[#C9A84C]">db/assignments.json</span>
+          <span id="assignments-json-status" class="font-mono text-xs text-[#555]"></span>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="validateJSON('assignments')" class="font-mono text-xs border border-[#2a2a2a] px-3 py-1.5 text-[#888] hover:border-[#C9A84C] hover:text-[#C9A84C] transition-colors rounded">VALIDATE</button>
+          <button onclick="formatJSON('assignments')" class="font-mono text-xs border border-[#2a2a2a] px-3 py-1.5 text-[#888] hover:border-[#00D2BE] hover:text-[#00D2BE] transition-colors rounded">FORMAT</button>
+          <button onclick="saveJSONFile('assignments')" class="font-mono text-xs bg-[#E8002D] hover:bg-[#ff1a45] text-white px-3 py-1.5 rounded transition-colors">SAVE TO GITHUB</button>
+        </div>
+      </div>
+      <textarea id="json-editor-assignments" spellcheck="false"
+        class="w-full font-mono text-xs bg-[#0d0d0d] border border-[#1e1e1e] rounded p-4 resize-y leading-relaxed"
+        style="min-height: 180px; tab-size: 2;"></textarea>
+    </section>
+  </div>
+
+</main>
+
+<script>
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+const state = {
+  pat: '',
+  owner: '',
+  repo: '',
+  connected: false,
+  currentUser: '',
+  currentTab: 1,
+  drivers: [],
+  designs: [],
+  assignments: {},
+  selectedTeam: '',
+  selectedDriver: null,
+  selectedProduct: 'tshirt',
+  champEdition: false,
+  currentDesignRecord: null,
+  vaultFilters: { assignee: 'all', status: 'all', team: '', driver: '', edition: 'all' },
+  editionMode: 'driver',
+  templates: null, // loaded from db/templates.json, falls back to hardcoded defaults
+};
+
+// ═══════════════════════════════════════════════════
+// PROMPT TEMPLATES
+// ═══════════════════════════════════════════════════
+
+const DRIVER_TEMPLATES = {
+  tshirt: `Flat lay product mockup of a {{TEE_COLOR}} oversized boxy fit t-shirt (drop shoulders, wide sleeves, slightly cropped length) on a neutral stone-grey background, showing front and back views side by side. Premium heavyweight cotton texture, realistic soft fabric folds. No official team logos, badges, or trademarked insignia anywhere on the garment.
+
+FRONT: On the LEFT CHEST — small clean typography "{{LAST_NAME}} · {{NUMBER}}" with "{{LAST_NAME}}" in white and "{{NUMBER}}" in {{PRIMARY_COLOR}}. Directly below in very small fine-print accent text: "{{NICKNAME}}" in gold italics. Thin horizontal accent line in white and gold extending slightly outward. On the RIGHT CHEST — {{FRONT_BADGE}} (original fan-created artistic graphic, not an official reproduction). Crew neck with slightly thick ribbing.
+
+BACK: TOP — "{{NICKNAME}}" in large bold spaced-out white letters as the hero text. CENTER — large bold "{{NUMBER}}" in {{PRIMARY_COLOR}}. Overlapping the number on one side — {{UNIQUE_ELEMENT}} as the original artistic graphic element. Diagonal racing streaks in {{PRIMARY_COLOR}} and {{SECONDARY_COLOR}} slicing across dynamically. {{BACK_GRAPHIC}}. BOTTOM — "{{TEAM_NAME}}" in plain neutral sans-serif white type (no logo, no official branding style replication) with a thin {{PRIMARY_COLOR}} underline.
+
+Style direction: Premium F1 streetwear editorial aesthetic — bold typography hierarchy, slightly oversized graphics scaled for streetwear proportions, warm muted colour grading. Authentic motorsport energy without being costumey. All graphic elements are original artistic interpretations inspired by the driver's identity. This is an independent fan art creation not affiliated with, endorsed by, or licensed by Formula 1, the FIA, or any Formula 1 team. No official logos or licensed marks.`,
+
+  hoodie: `Flat lay product mockup of a {{TEE_COLOR}} oversized heavyweight hoodie (relaxed fit, kangaroo pocket, ribbed cuffs and hem) on a neutral stone-grey background, showing front and back views side by side. Premium 400gsm fleece texture, realistic soft fabric folds. No official team logos, badges, or trademarked insignia anywhere on the garment.
+
+FRONT: On the LEFT CHEST — "{{LAST_NAME}} · {{NUMBER}}" with "{{LAST_NAME}}" in white and "{{NUMBER}}" in {{PRIMARY_COLOR}}. Below in very small fine-print: "{{NICKNAME}}" in gold italics. Thin white and gold accent line. On the RIGHT CHEST — {{FRONT_BADGE}} (original fan-created graphic). Hood with {{PRIMARY_COLOR}} drawcords. Ribbed cuffs.
+
+BACK: TOP — "{{NICKNAME}}" in large spaced-out white letters as hero text. CENTER — large bold "{{NUMBER}}" in {{PRIMARY_COLOR}}. Overlapping the number — {{UNIQUE_ELEMENT}} as original artistic graphic. Diagonal speed lines in {{PRIMARY_COLOR}} and {{SECONDARY_COLOR}}. {{BACK_GRAPHIC}}. BOTTOM — "{{TEAM_NAME}}" in plain neutral sans-serif white type with thin {{PRIMARY_COLOR}} underline, no branding style replication.
+
+Style direction: Premium F1 streetwear editorial aesthetic — bold typography hierarchy, slightly oversized graphics, warm muted colour grading, premium fleece drop feel. Authentic motorsport energy. All elements are original fan artwork. No official logos or licensed marks. Not affiliated with Formula 1 or any F1 team.`,
+};
+
+const CHAMP_TEMPLATES = {
+  tshirt: `Flat lay product mockup of a {{TEE_COLOR}} oversized boxy fit t-shirt (drop shoulders, wide sleeves, slightly cropped length) on a neutral stone-grey background, showing front and back views side by side. Premium heavyweight cotton texture, realistic soft fabric folds. CHAMPIONSHIP EDITION. No official team logos, badges, or trademarked insignia anywhere on the garment.
+
+FRONT: On the LEFT CHEST — small clean typography "{{LAST_NAME}} · 1" with "{{LAST_NAME}}" in white and "1" in gold. Directly below in very small fine-print: "{{NICKNAME}}" in gold italics. Thin horizontal accent line in white and gold. On the RIGHT CHEST — {{FRONT_BADGE}} (original fan-created artistic badge, not an official reproduction). Crew neck with slightly thick ribbing.
+
+BACK: TOP — "{{NICKNAME}}" in large bold spaced-out white letters as the hero text. CENTER — large bold "1" in {{PRIMARY_COLOR}} with an original artistic gold champion's crown illustration integrated directly above the 1, slightly oversized for streetwear impact. Overlapping the number on one side — {{UNIQUE_ELEMENT}} as the original artistic graphic element. Diagonal racing streaks in {{PRIMARY_COLOR}} and {{SECONDARY_COLOR}} slicing across the back dynamically. {{BACK_GRAPHIC}}. BOTTOM — "{{TEAM_NAME}}" in plain neutral sans-serif white type (no logo, no official branding style) with a thin gold underline. Below the team name — championship years "{{CHAMP_YEARS}}" in gold spaced fine-print text.
+
+Style direction: Championship prestige streetwear — elevated gold and primary colour palette, crown motif as the design anchor, premium editorial flat lay. Bold but refined, commanding without being loud. All graphic elements are original artistic interpretations. This is an independent fan art creation not affiliated with, endorsed by, or licensed by Formula 1, the FIA, or any Formula 1 team. No official logos or licensed marks.`,
+
+  hoodie: `Flat lay product mockup of a {{TEE_COLOR}} oversized heavyweight hoodie (relaxed fit, kangaroo pocket, ribbed cuffs) on a neutral stone-grey background, showing front and back views side by side. Premium 400gsm fleece texture, realistic soft fabric folds. CHAMPIONSHIP EDITION. No official team logos or trademarked insignia.
+
+FRONT: LEFT CHEST — "{{LAST_NAME}} · 1" with "{{LAST_NAME}}" in white, "1" in gold. Below in fine-print: "{{NICKNAME}}" in gold italics. White and gold accent line. RIGHT CHEST — {{FRONT_BADGE}} (original fan-created graphic). Hood with gold drawcords.
+
+BACK: TOP — "{{NICKNAME}}" in large spaced white hero text. CENTER — large bold "1" in {{PRIMARY_COLOR}} with original artistic gold crown illustration above. Overlapping the number — {{UNIQUE_ELEMENT}} as original artistic graphic. Diagonal speed lines in {{PRIMARY_COLOR}} and {{SECONDARY_COLOR}}. {{BACK_GRAPHIC}}. BOTTOM — "{{TEAM_NAME}}" in plain neutral sans-serif white type with gold underline. Below: championship years "{{CHAMP_YEARS}}" in gold fine-print.
+
+Style direction: Championship prestige streetwear — elevated gold and primary colour palette, crown motif as the design anchor, premium editorial flat lay. All original fan artwork. No official logos or licensed marks. Not affiliated with Formula 1 or any F1 team.`,
+};
+
+function getTemplates() {
+  if (state.templates) return state.templates;
+  return { driver: DRIVER_TEMPLATES, championship: CHAMP_TEMPLATES };
+}
+
+function assemblePrompt() {
+  const isChamp = state.editionMode === 'championship';
+  const allTemplates = getTemplates();
+  const templates = isChamp ? allTemplates.championship : allTemplates.driver;
+  const f = {
+    LAST_NAME:       v('f-last-name')       || '{{LAST_NAME}}',
+    NUMBER:          v('f-number')          || '{{NUMBER}}',
+    NICKNAME:        v('f-nickname')        || '{{NICKNAME}}',
+    TEAM_NAME:       v('f-team-name')       || '{{TEAM_NAME}}',
+    PRIMARY_COLOR:   v('f-primary-color')   || '{{PRIMARY_COLOR}}',
+    SECONDARY_COLOR: v('f-secondary-color') || '{{SECONDARY_COLOR}}',
+    UNIQUE_ELEMENT:  v('f-unique-element')  || '{{UNIQUE_ELEMENT}}',
+    FRONT_BADGE:     v('f-front-badge')     || '{{FRONT_BADGE}}',
+    BACK_GRAPHIC:    v('f-back-graphic')    || '{{BACK_GRAPHIC}}',
+    CHAMP_YEARS:     v('f-champ-years')     || '{{CHAMP_YEARS}}',
+    TEE_COLOR:       v('f-tee-color')       || 'black',
+  };
+
+  let result = templates[state.selectedProduct] || templates.tshirt;
+  for (const [key, val] of Object.entries(f)) {
+    result = result.replaceAll(`{{${key}}}`, val);
+  }
+  // Strip any leftover tokens from old template versions (e.g. {{STYLE_NOTES}})
+  result = result.replace(/\{\{[A-Z_]+\}\}/g, '');
+  $('prompt-preview').value = result;
+}
+window.assemblePrompt = assemblePrompt;
+
+// ═══════════════════════════════════════════════════
+// GITHUB API
+// ═══════════════════════════════════════════════════
+async function ghRequest(method, path, body = null) {
+  const url = `https://api.github.com/repos/${state.owner}/${state.repo}/contents/${path}`;
+  const opts = {
+    method,
+    headers: {
+      Authorization: `token ${state.pat}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+    },
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `GitHub API error ${res.status}`);
+  }
+  return res.json();
+}
+
+async function readJSON(path) {
+  const data = await ghRequest('GET', path);
+  const content = atob(data.content.replace(/\n/g, ''));
+  return { data: JSON.parse(content), sha: data.sha };
+}
+
+async function writeJSON(path, jsonData, message, sha = null) {
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(jsonData, null, 2))));
+  const body = { message, content };
+  if (sha) body.sha = sha;
+  return ghRequest('PUT', path, body);
+}
+
+async function uploadImage(path, base64data, sha = null) {
+  const body = {
+    message: `Upload image: ${path}`,
+    content: base64data,
+  };
+  if (sha) body.sha = sha;
+  return ghRequest('PUT', path, body);
+}
+
+// ═══════════════════════════════════════════════════
+// CONNECTION
+// ═══════════════════════════════════════════════════
+window.connectGitHub = async function() {
+  const pat   = $('cfg-pat').value.trim();
+  const owner = $('cfg-owner').value.trim();
+  const repo  = $('cfg-repo').value.trim();
+
+  if (!state.currentUser) {
+    toast('Select your Pilot name first (top right)', 'error');
+    $('user-select').style.borderColor = '#E8002D';
+    $('user-select').focus();
+    return;
+  }
+  if (!pat || !owner || !repo) { toast('Fill in PAT, owner, and repo name', 'error'); return; }
+
+  state.pat = pat; state.owner = owner; state.repo = repo;
+  sessionStorage.setItem('f1_pat',   pat);
+  sessionStorage.setItem('f1_owner', owner);
+  sessionStorage.setItem('f1_repo',  repo);
+
+  setDot('loading', 'CONNECTING…');
+  try {
+    const { data: drivers } = await readJSON('db/drivers.json');
+    state.drivers = drivers;
+    const { data: designs } = await readJSON('db/designs.json');
+    state.designs = designs.map(migrateDesign);
+    const { data: assignments } = await readJSON('db/assignments.json');
+    state.assignments = assignments;
+
+    // Load templates — create file if it doesn't exist yet
+    try {
+      const { data: templates } = await readJSON('db/templates.json');
+      state.templates = templates;
+    } catch(_) {
+      // First run — write defaults to repo
+      const defaults = { driver: DRIVER_TEMPLATES, championship: CHAMP_TEMPLATES };
+      state.templates = defaults;
+      await writeJSON('db/templates.json', defaults, 'Init templates.json with defaults').catch(() => {});
+    }
+
+    state.connected = true;
+    setDot('ok', `CONNECTED · ${owner}/${repo}`);
+    toast(`Connected — ${drivers.length} drivers loaded`, 'success');
+    toggleConfig();
+    populateDriverDropdowns();
+    renderVault();
+    localStorage.removeItem('f1_stale');
+  } catch(e) {
+    state.connected = false;
+    setDot('error', 'ERROR');
+    toast(e.message, 'error');
+    tryLoadCache();
+  }
+};
+
+window.clearConfig = function() {
+  ['f1_pat','f1_owner','f1_repo'].forEach(k => sessionStorage.removeItem(k));
+  state.connected = false;
+  setDot('idle', 'NOT CONNECTED');
+  $('cfg-pat').value = '';
+};
+
+function tryLoadCache() {
+  try {
+    const d = localStorage.getItem('f1_drivers');
+    const s = localStorage.getItem('f1_designs');
+    const a = localStorage.getItem('f1_assignments');
+    if (d) {
+      state.drivers = JSON.parse(d);
+      state.designs = s ? JSON.parse(s) : [];
+      state.assignments = a ? JSON.parse(a) : {};
+      const t = localStorage.getItem('f1_templates');
+      if (t) state.templates = JSON.parse(t);
+      $('stale-banner').classList.remove('hidden');
+      populateDriverDropdowns();
+      renderVault();
+    }
+  } catch(_) {}
+}
+
+function cacheData() {
+  localStorage.setItem('f1_drivers',     JSON.stringify(state.drivers));
+  localStorage.setItem('f1_designs',     JSON.stringify(state.designs));
+  localStorage.setItem('f1_assignments', JSON.stringify(state.assignments));
+  if (state.templates) localStorage.setItem('f1_templates', JSON.stringify(state.templates));
+}
+
+// ═══════════════════════════════════════════════════
+// DRIVER DROPDOWNS
+// ═══════════════════════════════════════════════════
+function populateDriverDropdowns() {
+  const teams = [...new Set(state.drivers.map(d => d.team))].sort();
+
+  // Tab 1
+  const ts = $('team-select');
+  ts.innerHTML = '<option value="">All Teams</option>';
+  teams.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; ts.appendChild(o); });
+
+  // Vault
+  const vt = $('vault-team-filter');
+  vt.innerHTML = '<option value="">All Teams</option>';
+  teams.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; vt.appendChild(o); });
+
+  filterDriverDropdown('driver-select', '');
+}
+
+function filterDriverDropdown(selectId, team) {
+  const sel = $(selectId);
+  let drivers = team ? state.drivers.filter(d => d.team === team) : state.drivers;
+  // Filter by edition mode (only applies to generator dropdown, not vault)
+  if (selectId === 'driver-select') {
+    if (state.editionMode === 'championship') {
+      drivers = drivers.filter(d => d.is_championship_edition);
+    } else {
+      drivers = drivers.filter(d => !d.is_championship_edition);
+    }
+  }
+  sel.innerHTML = '<option value="">— Select Driver —</option>';
+  drivers.forEach(d => {
+    const o = document.createElement('option');
+    o.value = d.slug;
+    o.textContent = `${d.display_name} #${d.number}${d.is_championship_edition ? ' ★' : ''}`;
+    sel.appendChild(o);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// EDITION MODE (generator)
+// ═══════════════════════════════════════════════════
+window.setEditionMode = function(mode) {
+  state.editionMode = mode;
+  document.querySelectorAll('.edition-pill').forEach(b => {
+    b.classList.toggle('pill-active',   b.dataset.mode === mode);
+    b.classList.toggle('pill-inactive', b.dataset.mode !== mode);
+    if (b.dataset.mode === 'championship' && b.classList.contains('pill-active')) {
+      b.style.background = '#C9A84C'; b.style.color = '#000';
+    } else if (b.dataset.mode === 'championship') {
+      b.style.background = ''; b.style.color = ''; b.style.borderColor = '#C9A84C44';
+    } else {
+      b.style.background = ''; b.style.color = '';
+    }
+  });
+  // Show champ years only in championship mode
+  const champRow = $('champ-years-row');
+  if (champRow) champRow.style.display = mode === 'championship' ? '' : 'none';
+  filterDriverDropdown('driver-select', state.selectedTeam);
+  state.selectedDriver = null;
+  clearForm();
+  setChampEdition(mode === 'championship');
+  assemblePrompt();
+};
+
+window.onTeamChange = function() {
+  state.selectedTeam = $('team-select').value;
+  filterDriverDropdown('driver-select', state.selectedTeam);
+  state.selectedDriver = null;
+  clearForm();
+};
+
+window.onDriverChange = function() {
+  const slug = $('driver-select').value;
+  state.selectedDriver = state.drivers.find(d => d.slug === slug) || null;
+  if (state.selectedDriver) prefillForm(state.selectedDriver);
+  else clearForm();
+};
+
+// ═══════════════════════════════════════════════════
+// FORM PREFILL
+// ═══════════════════════════════════════════════════
+async function prefillForm(driver) {
+  const rawExisting = state.designs.find(
+    d => d.driver_slug === driver.slug && d.product_type === state.selectedProduct
+  );
+  const existing = rawExisting ? migrateDesign(rawExisting) : null;
+
+  if (existing) {
+    state.currentDesignRecord = existing;
+    const activeVer = getActiveVer(existing);
+    const f = activeVer?._fields || {};
+    const vCount = existing.versions.length;
+    $('prompt-version-badge').textContent = `v${existing.active_version} · ${activeVer?.created_by || '?'} · ${vCount} design${vCount !== 1 ? 's' : ''}`;
+    $('prompt-version-badge').classList.remove('hidden');
+    sv('f-last-name',       f.last_name       || driver.last_name);
+    sv('f-number',          f.number          || driver.number);
+    sv('f-nickname',        f.nickname        || driver.nickname);
+    sv('f-team-name',       f.team_name       || driver.team);
+    sv('f-primary-color',   f.primary_color   || driver.team_colors.primary);
+    sv('f-secondary-color', f.secondary_color || driver.team_colors.secondary);
+    sv('f-unique-element',  f.unique_element  || driver.unique_element);
+    sv('f-front-badge',     f.front_badge     || driver.front_badge_default || '');
+    sv('f-back-graphic',    f.back_graphic    || '');
+    sv('f-champ-years',     f.champ_years     || driver.championship_years.join(' · '));
+    sv('f-tee-color',       f.tee_color       || 'black');
+    setChampEdition(f.is_champ_edition ?? driver.is_championship_edition);
+  } else {
+    state.currentDesignRecord = null;
+    $('prompt-version-badge').classList.add('hidden');
+    sv('f-last-name',       driver.last_name);
+    sv('f-number',          driver.number);
+    sv('f-nickname',        driver.nickname);
+    sv('f-team-name',       driver.team);
+    sv('f-primary-color',   driver.team_colors.primary);
+    sv('f-secondary-color', driver.team_colors.secondary);
+    sv('f-unique-element',  driver.unique_element);
+    sv('f-front-badge',     driver.front_badge_default || '');
+    sv('f-back-graphic',    '');
+    sv('f-champ-years',     driver.championship_years.join(' · '));
+    sv('f-tee-color',       'black');
+    setChampEdition(driver.is_championship_edition);
+  }
+
+  $('f-primary-color-picker').value   = $('f-primary-color').value || '#E8002D';
+  $('f-secondary-color-picker').value = $('f-secondary-color').value || '#C9A84C';
+
+  const assignee = getAssignee(driver.slug);
+  if (assignee) {
+    $('assignment-badge').classList.remove('hidden');
+    $('assignment-name').textContent = assignee;
+  } else {
+    $('assignment-badge').classList.add('hidden');
+  }
+
+  assemblePrompt();
+}
+
+function clearForm() {
+  ['f-last-name','f-number','f-nickname','f-team-name',
+   'f-primary-color','f-secondary-color','f-unique-element',
+   'f-front-badge','f-back-graphic','f-champ-years']
+    .forEach(id => sv(id, ''));
+  $('prompt-preview').value = '';
+  $('assignment-badge').classList.add('hidden');
+  $('prompt-version-badge').classList.add('hidden');
+  state.currentDesignRecord = null;
+}
+
+function getAssignee(slug) {
+  for (const [user, slugs] of Object.entries(state.assignments)) {
+    if (slugs.includes(slug)) return user;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════
+// PRODUCT SELECTION
+// ═══════════════════════════════════════════════════
+window.selectProduct = function(product) {
+  state.selectedProduct = product;
+  document.querySelectorAll('.product-pill').forEach(b => {
+    b.classList.toggle('pill-active',   b.dataset.product === product);
+    b.classList.toggle('pill-inactive', b.dataset.product !== product);
+  });
+  if (state.selectedDriver) prefillForm(state.selectedDriver);
+  else assemblePrompt();
+};
+
+// ═══════════════════════════════════════════════════
+// CHAMP EDITION TOGGLE
+// ═══════════════════════════════════════════════════
+window.toggleChampEdition = function() {
+  setChampEdition(!state.champEdition);
+  assemblePrompt();
+};
+
+function setChampEdition(val) {
+  state.champEdition = !!val;
+}
+
+// ═══════════════════════════════════════════════════
+// COLOR SYNC
+// ═══════════════════════════════════════════════════
+window.syncColor = function(which) {
+  const picker = $(`f-${which}-color-picker`);
+  const text   = $(`f-${which}-color`);
+  text.value = picker.value;
+  assemblePrompt();
+};
+window.syncColorFromText = function(which) {
+  const text   = $(`f-${which}-color`);
+  const picker = $(`f-${which}-color-picker`);
+  if (/^#[0-9A-Fa-f]{6}$/.test(text.value)) picker.value = text.value;
+  assemblePrompt();
+};
+
+// ═══════════════════════════════════════════════════
+// COPY PROMPT
+// ═══════════════════════════════════════════════════
+window.copyPrompt = async function() {
+  const text = $('prompt-preview').value;
+  if (!text) { toast('No prompt to copy', 'error'); return; }
+  await navigator.clipboard.writeText(text);
+  const btn = $('copy-btn');
+  btn.classList.add('pulse-once');
+  btn.textContent = '✓ COPIED!';
+  setTimeout(() => { btn.textContent = '📋 COPY PROMPT'; btn.classList.remove('pulse-once'); }, 2000);
+  toast('Prompt copied to clipboard', 'success');
+};
+
+// ═══════════════════════════════════════════════════
+// VERSION HELPERS
+// ═══════════════════════════════════════════════════
+
+// Migrate old flat design record to versioned format, and ensure images array on all versions
+function migrateDesign(d) {
+  if (d.versions) {
+    // Ensure every version has an images array (migrate old image_path field)
+    d.versions = d.versions.map(ver => {
+      if (!ver.images) ver.images = ver.image_path ? [ver.image_path] : [];
+      if (!ver.crops)  ver.crops  = [];
+      return ver;
+    });
+    return d;
+  }
+  const ver = {
+    v:           d.prompt_version || 1,
+    prompt_text: d.prompt_text   || '',
+    images:      d.image_path ? [d.image_path] : [],
+    created_by:  d.saved_by || d.uploaded_by || 'unknown',
+    created_at:  d.saved_at || d.uploaded_at || new Date().toISOString(),
+    status:      d.status        || 'draft',
+    notes:       d.notes         || '',
+    _fields:     d._fields       || {},
+  };
+  return {
+    id:             d.id,
+    driver_slug:    d.driver_slug,
+    product_type:   d.product_type,
+    assigned_to:    d.assigned_to,
+    active_version: ver.v,
+    status:         ver.status,
+    versions:       [ver],
+  };
+}
+
+function getActiveVer(design) {
+  return design.versions?.find(v => v.v === design.active_version)
+      || design.versions?.[design.versions.length - 1]
+      || null;
+}
+
+function getVer(design, vNum) {
+  return design.versions?.find(v => v.v === vNum) || null;
+}
+
+function nextVerNum(design) {
+  return Math.max(0, ...(design.versions || []).map(v => v.v)) + 1;
+}
+
+// ═══════════════════════════════════════════════════
+// SAVE PROMPT
+// ═══════════════════════════════════════════════════
+window.savePrompt = async function(forceNew = false) {
+  if (!state.connected) { toast('Connect to GitHub first', 'error'); return; }
+  if (!state.selectedDriver) { toast('Select a driver first', 'error'); return; }
+  if (!state.currentUser) { toast('Select your name (top right)', 'error'); return; }
+
+  const promptText = $('prompt-preview').value;
+  if (!promptText) { toast('Generate a prompt first', 'error'); return; }
+  if (!v('f-last-name') || !v('f-number') || !v('f-nickname') || !v('f-team-name')) {
+    toast('Fill in Last Name, Number, Nickname and Team before saving', 'error'); return;
+  }
+
+  const fields = {
+    last_name:        v('f-last-name'),
+    number:           v('f-number'),
+    nickname:         v('f-nickname'),
+    team_name:        v('f-team-name'),
+    primary_color:    v('f-primary-color'),
+    secondary_color:  v('f-secondary-color'),
+    unique_element:   v('f-unique-element'),
+    front_badge:      v('f-front-badge'),
+    back_graphic:     v('f-back-graphic'),
+    champ_years:      v('f-champ-years'),
+    tee_color:        v('f-tee-color') || 'black',
+    is_champ_edition: state.champEdition,
+  };
+
+  $('save-btn').textContent = 'SAVING…';
+  $('save-btn').disabled = true;
+  $('save-new-btn').disabled = true;
+
+  try {
+    const { data: rawDesigns, sha } = await readJSON('db/designs.json');
+    const designs = rawDesigns.map(migrateDesign);
+    const existingIdx = designs.findIndex(
+      d => d.driver_slug === state.selectedDriver.slug && d.product_type === state.selectedProduct
+    );
+    const now = new Date().toISOString();
+
+    if (existingIdx >= 0) {
+      const rec = designs[existingIdx];
+      if (forceNew) {
+        // Add a brand new version
+        const vNum = nextVerNum(rec);
+        rec.versions.push({
+          v:           vNum,
+          prompt_text: promptText,
+          images:      [],
+          created_by:  state.currentUser,
+          created_at:  now,
+          status:      'prompt_ready',
+          notes:       '',
+          _fields:     fields,
+        });
+        rec.active_version = vNum;
+        rec.status = 'prompt_ready';
+        $('prompt-version-badge').textContent = `v${vNum} · ${state.currentUser}`;
+        toast(`Saved as new design v${vNum}`, 'success');
+      } else {
+        // Update the active version's prompt (no image change)
+        const activeVer = getActiveVer(rec);
+        if (activeVer) {
+          activeVer.prompt_text = promptText;
+          activeVer._fields     = fields;
+          activeVer.created_by  = state.currentUser;
+          activeVer.created_at  = now;
+          if (!activeVer.images) activeVer.images = activeVer.image_path ? [activeVer.image_path] : [];
+          activeVer.status = activeVer.images.length > 0 ? activeVer.status : 'prompt_ready';
+        }
+        rec.status = rec.versions.find(v => v.v === rec.active_version)?.status || 'prompt_ready';
+        $('prompt-version-badge').textContent = `v${rec.active_version} · ${state.currentUser}`;
+        toast('Prompt updated ✓', 'success');
+      }
+      $('prompt-version-badge').classList.remove('hidden');
+      state.currentDesignRecord = designs[existingIdx];
+    } else {
+      // Brand new record
+      const newRec = {
+        id:             `${state.selectedDriver.slug}_${state.selectedProduct}`,
+        driver_slug:    state.selectedDriver.slug,
+        product_type:   state.selectedProduct,
+        assigned_to:    getAssignee(state.selectedDriver.slug) || state.currentUser,
+        active_version: 1,
+        status:         'prompt_ready',
+        versions: [{
+          v:           1,
+          prompt_text: promptText,
+          images:      [],
+          created_by:  state.currentUser,
+          created_at:  now,
+          status:      'prompt_ready',
+          notes:       '',
+          _fields:     fields,
+        }],
+      };
+      designs.push(newRec);
+      state.currentDesignRecord = newRec;
+      $('prompt-version-badge').textContent = `v1 · ${state.currentUser}`;
+      $('prompt-version-badge').classList.remove('hidden');
+      toast('Prompt saved to GitHub ✓', 'success');
+    }
+
+    await writeJSON('db/designs.json', designs,
+      `${forceNew ? 'New design version' : 'Update prompt'}: ${state.selectedDriver.slug} ${state.selectedProduct} by ${state.currentUser}`, sha);
+
+    state.designs = designs;
+    cacheData();
+    renderVault();
+  } catch(e) {
+    if (e.message.includes('conflict') || e.message.includes('SHA')) {
+      toast('Save conflict — please refresh and retry', 'error');
+    } else {
+      toast(`Save failed: ${e.message}`, 'error');
+    }
+  } finally {
+    $('save-btn').textContent = '💾 UPDATE';
+    $('save-btn').disabled = false;
+    $('save-new-btn').disabled = false;
+  }
+};
+
+window.savePromptAsNew = function() { savePrompt(true); };
+
+// ═══════════════════════════════════════════════════
+// VAULT
+// ═══════════════════════════════════════════════════
+window.setFilter = function(type, val) {
+  state.vaultFilters[type] = val;
+  const groupMap = { assignee: '.assignee-pill', status: '.status-pill', edition: '.vault-edition-pill' };
+  const group = groupMap[type];
+  if (group) {
+    document.querySelectorAll(group).forEach(b => {
+      b.classList.toggle('pill-active',   b.dataset.val === val);
+      b.classList.toggle('pill-inactive', b.dataset.val !== val);
+      // Gold tint for championship active pill
+      if (type === 'edition' && b.dataset.val === 'championship' && b.classList.contains('pill-active')) {
+        b.style.background = '#C9A84C'; b.style.color = '#000';
+      } else if (type === 'edition' && b.dataset.val === 'championship') {
+        b.style.background = ''; b.style.color = '';
+      }
+    });
+  }
+  renderVault();
+};
+
+window.onVaultTeamFilter = function() {
+  const team = $('vault-team-filter').value;
+  state.vaultFilters.team = team;
+  // Filter vault driver dropdown
+  const vd = $('vault-driver-filter');
+  const drivers = team ? state.drivers.filter(d => d.team === team) : state.drivers;
+  vd.innerHTML = '<option value="">All Drivers</option>';
+  drivers.forEach(d => {
+    const o = document.createElement('option');
+    o.value = d.slug;
+    o.textContent = d.display_name;
+    vd.appendChild(o);
+  });
+  renderVault();
+};
+
+window.refreshVault = async function() {
+  if (!state.connected) { toast('Connect to GitHub first', 'error'); return; }
+  try {
+    const { data: designs } = await readJSON('db/designs.json');
+    state.designs = designs;
+    cacheData();
+    renderVault();
+    toast('Vault refreshed', 'success');
+  } catch(e) {
+    toast(`Refresh failed: ${e.message}`, 'error');
+  }
+};
+
+function renderVault() {
+  const grid = $('vault-grid');
+  const f = state.vaultFilters;
+
+  let designs = [...state.designs];
+  if (f.assignee !== 'all') designs = designs.filter(d => d.assigned_to === f.assignee);
+  if (f.status   !== 'all') designs = designs.filter(d => d.status      === f.status);
+  if (f.driver)             designs = designs.filter(d => d.driver_slug  === f.driver);
+  if (f.team) {
+    const slugsInTeam = state.drivers.filter(d => d.team === f.team).map(d => d.slug);
+    designs = designs.filter(d => slugsInTeam.includes(d.driver_slug));
+  }
+  if (f.edition !== 'all') {
+    const champSlugs = state.drivers.filter(d => d.is_championship_edition).map(d => d.slug);
+    if (f.edition === 'championship') designs = designs.filter(d => champSlugs.includes(d.driver_slug));
+    if (f.edition === 'driver')       designs = designs.filter(d => !champSlugs.includes(d.driver_slug));
+  }
+
+  if (designs.length === 0) {
+    grid.innerHTML = state.designs.length === 0
+      ? `<div class="col-span-full py-16 flex flex-col items-center gap-4">
+           <div class="text-[#2a2a2a] text-5xl">🏎</div>
+           <div class="font-orbitron text-sm text-[#444] uppercase tracking-wider">No designs yet</div>
+           <div class="font-mono text-xs text-[#333] text-center max-w-xs leading-relaxed">
+             Go to the <span class="text-[#E8002D]">⚡ PROMPT GENERATOR</span> tab, select a driver and product,
+             fill the form, then click <span class="text-[#E8002D]">✦ NEW VERSION</span> to save your first prompt.
+             It will appear here as a card.
+           </div>
+           <button onclick="switchTab(1)" class="mt-2 bg-[#E8002D] hover:bg-[#ff1a45] text-white font-orbitron text-xs font-bold py-2 px-6 rounded uppercase tracking-wider transition-colors">
+             GO TO GENERATOR →
+           </button>
+         </div>`
+      : `<div class="col-span-full text-center font-mono text-xs text-[#333] py-16">No designs match current filters</div>`;
+    return;
+  }
+
+  grid.innerHTML = designs.map(rawDesign => {
+    const design = migrateDesign(rawDesign);
+    const driver = state.drivers.find(d => d.slug === design.driver_slug) || {};
+    const activeVer = getActiveVer(design);
+    const vCount = design.versions?.length || 1;
+    const statusClass = `status-${design.status}`;
+    const statusLabel = { draft: 'DRAFT', prompt_ready: 'PROMPT READY', image_uploaded: 'UPLOADED', approved: 'APPROVED' }[design.status] || design.status.toUpperCase();
+    const productLabel = { tshirt: 'T-SHIRT', hoodie: 'HOODIE' }[design.product_type] || design.product_type.toUpperCase();
+    const firstImage = activeVer?.images?.[0];
+    const imgCount = activeVer?.images?.length || 0;
+    const vBadge = vCount > 1 ? `<span class="absolute top-2 right-2 bg-black/70 font-mono text-[10px] text-[#C9A84C] px-1.5 py-0.5 rounded">${vCount} ver</span>` : '';
+    const imgBadge = imgCount > 1 ? `<span class="absolute bottom-2 left-2 bg-black/70 font-mono text-[10px] text-white px-1.5 py-0.5 rounded">📷 ${imgCount}</span>` : '';
+    const thumb = firstImage
+      ? `<div class="relative"><img src="https://raw.githubusercontent.com/${state.owner}/${state.repo}/main/${firstImage}?t=${Date.now()}" class="w-full h-36 object-cover rounded-t" onerror="this.parentElement.innerHTML='<div class=\\'h-36 flex items-center justify-center text-[#333] font-mono text-xs bg-[#0d0d0d]\\'>IMAGE MISSING</div>'" />${vBadge}${imgBadge}</div>`
+      : `<div class="h-36 flex flex-col items-center justify-center bg-[#0d0d0d] rounded-t relative gap-2">
+           <div class="text-[#2a2a2a] text-3xl">#${driver.number || '?'}</div>
+           <label class="bg-[#E8002D] hover:bg-[#ff1a45] text-white font-orbitron text-[10px] font-bold px-3 py-1.5 rounded uppercase tracking-wider cursor-pointer transition-colors" onclick="event.stopPropagation()">
+             📁 UPLOAD
+             <input type="file" accept="image/png,image/jpeg" multiple class="hidden" onchange="quickUpload(event,'${design.id}',${design.active_version})" />
+           </label>
+           ${vBadge}
+         </div>`;
+    const teamColor = driver.team_colors?.primary || '#E8002D';
+    const isChamp = driver.is_championship_edition;
+    const cardBorder = isChamp
+      ? `border-left: 3px solid #C9A84C; box-shadow: 0 0 12px #C9A84C18;`
+      : `border-left: 3px solid ${teamColor}33;`;
+
+    return `
+      <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg overflow-hidden card-hover transition-all cursor-pointer group"
+           style="${cardBorder}"
+           onclick="openDesignModal('${design.id}')">
+        ${thumb}
+        <div class="p-3 space-y-2">
+          <div class="flex items-start justify-between gap-1">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <div class="font-orbitron text-xs font-bold text-white truncate">${driver.display_name || design.driver_slug}</div>
+                ${isChamp ? `<span class="shrink-0 font-orbitron text-[9px] font-bold px-1.5 py-0.5 rounded" style="background:#C9A84C22;color:#C9A84C;border:1px solid #C9A84C44">★ CHAMP</span>` : ''}
+              </div>
+              <div class="font-mono text-xs text-[#C9A84C]">${driver.nickname || ''}</div>
+            </div>
+            <span class="shrink-0 font-orbitron text-[10px] font-bold px-2 py-0.5 rounded ${statusClass}">${statusLabel}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-[10px] text-[#555] border border-[#2a2a2a] px-2 py-0.5 rounded">${productLabel}</span>
+            <span class="font-mono text-[10px] text-[#555]">${design.assigned_to || '—'}</span>
+          </div>
+          <div class="font-mono text-[10px] text-[#444]">
+            v${design.active_version} · ${activeVer?.created_by || '—'}
+            ${vCount > 1 ? `<span class="text-[#C9A84C]"> · ${vCount} designs</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// DESIGN MODAL (versioned)
+// ═══════════════════════════════════════════════════
+
+// Track which version is active inside the open modal
+state.modalDesignId  = null;
+state.modalVersionNum = null;
+
+window.openDesignModal = function(designId, vNum = null) {
+  const rawDesign = state.designs.find(d => d.id === designId);
+  if (!rawDesign) return;
+  const design = migrateDesign(rawDesign);
+  const targetV = vNum ?? design.active_version;
+  state.modalDesignId   = designId;
+  state.modalVersionNum = targetV;
+  renderModal(design, targetV);
+  $('modal').classList.remove('hidden');
+};
+
+const EXTRACTION_PROMPT = `I need all printable design elements from this t-shirt mockup extracted into a single PNG file with a transparent background, print-ready.
+
+Extract every distinct graphic and text element from both the front and back of the shirt:
+— Front left chest: name · number typography block
+— Front right chest: badge / crest graphic
+— Back: hero nickname text
+— Back: large number graphic
+— Back: circuit layout / helmet / unique graphic element
+— Back: team name text (bottom)
+— Any sleeve or additional detail if present
+
+Arrange all extracted elements on a single transparent canvas with generous spacing between them (at least 80px gap) so each element is clearly separated and easy to select individually in design software. Do not group or overlap any elements.
+
+Remove all backgrounds completely — no shirt fabric, no grey mockup background, no shadows from the garment. Preserve exact colours, line weights, and proportions of every element. Export as one PNG file named elements.png.`;
+
+function renderModal(design, vNum) {
+  const ver = getVer(design, vNum) || getActiveVer(design);
+  if (!ver) return;
+  const driver    = state.drivers.find(d => d.slug === design.driver_slug) || {};
+  const teamColor = driver.team_colors?.primary || '#E8002D';
+  const statusClass = `status-${ver.status}`;
+  const statusLabel = { draft:'DRAFT', prompt_ready:'PROMPT READY', image_uploaded:'UPLOADED', approved:'APPROVED' }[ver.status] || ver.status;
+  const productLabel = { tshirt:'T-SHIRT', hoodie:'HOODIE' }[design.product_type] || design.product_type;
+  const vCount = design.versions.length;
+  const images = ver.images || [];
+  const crops  = ver.crops  || [];
+
+  // Version dropdown options
+  const vOptions = design.versions.map(v => {
+    const imgCount = v.images?.length || 0;
+    const label = `v${v.v} — ${v.created_by || '?'} — ${v.status.replace('_',' ')} ${imgCount > 0 ? `📷 ${imgCount}` : ''}`;
+    return `<option value="${v.v}" ${v.v === vNum ? 'selected' : ''}>${label}</option>`;
+  }).join('');
+
+  // Image gallery
+  const galleryHtml = images.length > 0
+    ? `<div class="space-y-2">
+        <div class="flex gap-2 overflow-x-auto pb-1" id="img-gallery">
+          ${images.map((imgPath, i) => `
+            <div class="shrink-0 relative group/img" style="width:140px">
+              <img src="https://raw.githubusercontent.com/${state.owner}/${state.repo}/main/${imgPath}?t=${Date.now()}"
+                class="w-full h-24 object-cover rounded border border-[#2a2a2a]"
+                onerror="this.src=''" />
+              <div class="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity rounded flex items-center justify-center gap-1">
+                <button onclick="downloadImage('${imgPath}','${imgPath.split('/').pop()}')" class="bg-[#1a1a1a] hover:bg-[#E8002D] text-white font-mono text-[10px] px-1.5 py-1 rounded transition-colors" title="Download">⬇</button>
+                <button onclick="openCropModal('${design.id}',${vNum},${i})" class="bg-[#1a1a1a] hover:bg-[#C9A84C] text-white font-mono text-[10px] px-1.5 py-1 rounded transition-colors" title="Crop elements">✂</button>
+                <button onclick="deleteImageFromVersion('${design.id}',${vNum},${i})" class="bg-[#1a1a1a] hover:bg-red-900 text-red-400 font-mono text-[10px] px-1.5 py-1 rounded transition-colors" title="Remove">✕</button>
+              </div>
+              <div class="text-center font-mono text-[9px] text-[#444] mt-0.5">#${i+1}</div>
+            </div>`).join('')}
+        </div>
+        <!-- Extraction prompt -->
+        <div class="border border-[#C9A84C33] bg-[#C9A84C08] rounded p-3">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-orbitron text-[10px] text-[#C9A84C] uppercase tracking-wider">✂ Extract Design Elements</span>
+            <button onclick="copyExtractionPrompt()" class="font-mono text-[10px] text-[#C9A84C] hover:text-white border border-[#C9A84C33] px-2 py-0.5 rounded transition-colors">COPY PROMPT</button>
+          </div>
+          <p class="font-mono text-[10px] text-[#666] leading-relaxed">Run this prompt alongside your uploaded image in an AI tool to get separate print-ready PNGs for each design element.</p>
+        </div>
+      </div>`
+    : `<div id="modal-img-placeholder" class="h-32 flex items-center justify-center bg-[#0d0d0d] rounded border border-dashed border-[#2a2a2a] text-[#333] font-mono text-xs">NO IMAGES — UPLOAD BELOW</div>`;
+
+  const isActive = design.active_version === vNum;
+
+  $('modal-box').innerHTML = `
+    <!-- Header -->
+    <div class="p-5 border-b border-[#2a2a2a] flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-1 h-8 rounded shrink-0" style="background:${teamColor}"></div>
+        <div class="min-w-0">
+          <h2 class="font-orbitron text-base font-bold text-white truncate">${driver.display_name || design.driver_slug}</h2>
+          <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+            <span class="font-mono text-xs text-[#555]">${productLabel}</span>
+            <span class="text-[#333]">·</span>
+            <span class="font-orbitron text-[10px] font-bold px-2 py-0.5 rounded ${statusClass}">${statusLabel}</span>
+            <span class="text-[#333]">·</span>
+            <span class="font-mono text-xs text-[#555]">by ${ver.created_by || '—'}</span>
+            <span class="text-[#333]">·</span>
+            <span class="font-mono text-xs text-[#444]">${ver.created_at ? ver.created_at.slice(0,10) : ''}</span>
+          </div>
+        </div>
+      </div>
+      <button onclick="closeModal()" class="text-[#555] hover:text-white font-mono text-xl shrink-0">✕</button>
+    </div>
+
+    <!-- Version + Assign bar -->
+    <div class="px-5 py-3 bg-[#0d0d0d] border-b border-[#2a2a2a] flex items-center gap-3 flex-wrap">
+      <span class="font-mono text-xs text-[#555] uppercase tracking-wider shrink-0">Version:</span>
+      <select id="modal-version-select" onchange="switchModalVersion('${design.id}', parseInt(this.value))"
+        class="flex-1 min-w-[180px] px-3 py-1.5 font-mono text-xs">
+        ${vOptions}
+      </select>
+      <span class="font-mono text-xs text-[#444]">${vCount} ver</span>
+      ${!isActive ? `<button onclick="setActiveVersion('${design.id}', ${vNum})" class="font-orbitron text-[10px] font-bold border border-[#C9A84C33] text-[#C9A84C] px-3 py-1.5 rounded hover:bg-[#C9A84C22] transition-colors uppercase">★ SET ACTIVE</button>` : `<span class="font-mono text-[10px] text-[#34d399] border border-[#34d39933] px-2 py-1 rounded">ACTIVE</span>`}
+      <button onclick="newVersionFromVault('${design.id}')" class="font-orbitron text-[10px] font-bold border border-[#E8002D33] text-[#E8002D] px-3 py-1.5 rounded hover:bg-[#E8002D22] transition-colors uppercase">+ NEW VER</button>
+      <span class="text-[#2a2a2a] hidden md:inline">|</span>
+      <span class="font-mono text-xs text-[#555] uppercase tracking-wider shrink-0">Assign:</span>
+      <select onchange="reassignDesign('${design.id}', this.value)" class="px-3 py-1.5 font-mono text-xs">
+        <option value="Ayush"   ${design.assigned_to === 'Ayush'   ? 'selected' : ''}>Ayush</option>
+        <option value="Anagh"   ${design.assigned_to === 'Anagh'   ? 'selected' : ''}>Anagh</option>
+        <option value="Vanshika"${design.assigned_to === 'Vanshika'? 'selected' : ''}>Vanshika</option>
+      </select>
+    </div>
+
+    <!-- Body -->
+    <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
+      <!-- Left: Images + Upload -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="font-mono text-xs text-[#555] uppercase tracking-wider">Images · v${vNum} (${images.length})</span>
+          ${images.length > 0 ? `<button onclick="openCropModal('${design.id}',${vNum},0)" class="font-mono text-[10px] border border-[#C9A84C33] text-[#C9A84C] px-2 py-1 rounded hover:bg-[#C9A84C22] transition-colors">✂ CROP ELEMENTS</button>` : ''}
+        </div>
+        ${galleryHtml}
+        <label class="flex items-center justify-center gap-2 border border-dashed border-[#E8002D44] hover:border-[#E8002D] bg-[#E8002D08] hover:bg-[#E8002D15] text-[#E8002D] font-orbitron text-xs font-bold py-3 rounded uppercase tracking-wider cursor-pointer text-center transition-all">
+          📁 ADD IMAGE${images.length > 0 ? 'S' : ''} TO v${vNum}
+          <input type="file" accept="image/png,image/jpeg,image/jpg" multiple class="hidden" onchange="handleImageUpload(event,'${design.id}',${vNum})" />
+        </label>
+        <!-- Crops -->
+        ${crops.length > 0 ? `
+        <div>
+          <div class="font-mono text-xs text-[#555] uppercase tracking-wider mb-1">Cropped Elements · v${vNum} (${crops.length})</div>
+          <div class="flex gap-2 overflow-x-auto pb-1">
+            ${crops.map((cropPath, ci) => {
+              const label = cropPath.split('/').pop().replace(/\.png$/i,'');
+              return `<div class="shrink-0 relative group/crop" style="width:100px">
+                <img src="https://raw.githubusercontent.com/${state.owner}/${state.repo}/main/${cropPath}?t=${Date.now()}"
+                  class="w-full h-20 object-contain rounded border border-[#C9A84C33] bg-[#0d0d0d]"
+                  onerror="this.style.opacity='0.3'" />
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover/crop:opacity-100 transition-opacity rounded flex items-center justify-center">
+                  <button onclick="downloadImage('${cropPath}','${cropPath.split('/').pop()}')" class="bg-[#1a1a1a] hover:bg-[#E8002D] text-white font-mono text-[10px] px-1.5 py-1 rounded transition-colors">⬇</button>
+                </div>
+                <div class="text-center font-mono text-[9px] text-[#C9A84C44] mt-0.5 truncate" title="${label}">${label.split('_').slice(-2).join('_')}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>` : ''}
+        <!-- Notes -->
+        <div>
+          <div class="font-mono text-xs text-[#555] uppercase tracking-wider mb-1">Notes · v${vNum}</div>
+          <textarea id="modal-notes" rows="2" class="w-full px-3 py-2 text-sm font-mono resize-none" placeholder="Add notes for this version...">${ver.notes || ''}</textarea>
+          <button onclick="saveNotes('${design.id}',${vNum})" class="mt-1 w-full border border-[#2a2a2a] text-[#888] hover:text-white hover:border-[#E8002D] font-mono text-xs py-1.5 rounded transition-colors">SAVE NOTES</button>
+        </div>
+      </div>
+
+      <!-- Right: Prompt + Actions -->
+      <div class="space-y-3">
+        <div class="font-mono text-xs text-[#555] uppercase tracking-wider">Prompt · v${vNum} · ${ver.created_by || '—'}</div>
+        <textarea id="modal-prompt" rows="14" class="w-full px-3 py-2 text-xs font-mono resize-none leading-relaxed">${ver.prompt_text || '(no prompt saved)'}</textarea>
+
+        <div class="flex gap-2 pt-2 border-t border-[#2a2a2a] flex-wrap">
+          ${ver.status !== 'approved'
+            ? `<button onclick="markApproved('${design.id}',${vNum})" class="flex-1 bg-[#0d2e18] hover:bg-[#1a5c35] border border-[#34d39933] text-[#34d399] font-orbitron text-xs font-bold py-2 px-3 rounded uppercase tracking-wider transition-colors">✓ APPROVE v${vNum}</button>`
+            : `<div class="flex-1 bg-[#0d2e18] border border-[#34d39933] text-[#34d399] font-orbitron text-xs font-bold py-2 px-3 rounded uppercase tracking-wider text-center">✓ APPROVED</div>`}
+          <button onclick="jumpToGenerator('${design.driver_slug}','${design.product_type}')" class="flex-1 border border-[#2a2a2a] text-[#888] hover:text-white hover:border-[#E8002D] font-orbitron text-xs font-bold py-2 px-3 rounded uppercase tracking-wider transition-colors">↑ REGENERATE</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+window.copyExtractionPrompt = async function() {
+  await navigator.clipboard.writeText(EXTRACTION_PROMPT);
+  toast('Extraction prompt copied ✓', 'success');
+};
+
+window.switchModalVersion = function(designId, vNum) {
+  state.modalVersionNum = vNum;
+  const design = migrateDesign(state.designs.find(d => d.id === designId));
+  if (!design) return;
+  renderModal(design, vNum);
+};
+
+window.setActiveVersion = async function(designId, vNum) {
+  if (!state.connected) { toast('Not connected', 'error'); return; }
+  try {
+    const { data: rawDesigns, sha } = await readJSON('db/designs.json');
+    const designs = rawDesigns.map(migrateDesign);
+    const idx = designs.findIndex(d => d.id === designId);
+    if (idx < 0) return;
+    designs[idx].active_version = vNum;
+    designs[idx].status = getVer(designs[idx], vNum)?.status || designs[idx].status;
+    await writeJSON('db/designs.json', designs, `Set active version v${vNum}: ${designId}`, sha);
+    state.designs = designs; cacheData(); renderVault();
+    renderModal(designs[idx], vNum);
+    toast(`v${vNum} set as active design`, 'success');
+  } catch(e) { toast(`Failed: ${e.message}`, 'error'); }
+};
+
+window.closeModal = function() { $('modal').classList.add('hidden'); };
+window.closeModalOnBackdrop = function(e) { if (e.target === $('modal')) closeModal(); };
+
+// Create a new blank version from within the vault modal (no need to go to generator)
+window.newVersionFromVault = async function(designId) {
+  if (!state.connected) { toast('Not connected to GitHub', 'error'); return; }
+  if (!state.currentUser) { toast('Select your name first (top right)', 'error'); return; }
+  if (!confirm('Create a new blank version for this design? You can add images and edit the prompt in the vault.')) return;
+  try {
+    const { data: rawDesigns, sha } = await readJSON('db/designs.json');
+    const designs = rawDesigns.map(migrateDesign);
+    const idx = designs.findIndex(d => d.id === designId);
+    if (idx < 0) return;
+    const rec = designs[idx];
+    const vNum = nextVerNum(rec);
+    const activeVer = getActiveVer(rec);
+    rec.versions.push({
+      v:           vNum,
+      prompt_text: activeVer?.prompt_text || '',
+      images:      [],
+      created_by:  state.currentUser,
+      created_at:  new Date().toISOString(),
+      status:      'prompt_ready',
+      notes:       '',
+      _fields:     activeVer?._fields ? { ...activeVer._fields } : {},
+    });
+    rec.active_version = vNum;
+    rec.status = 'prompt_ready';
+    await writeJSON('db/designs.json', designs, `New version v${vNum} from vault: ${designId}`, sha);
+    state.designs = designs; cacheData(); renderVault();
+    renderModal(rec, vNum);
+    toast(`New v${vNum} created ✓`, 'success');
+  } catch(e) { toast(`Failed: ${e.message}`, 'error'); }
+};
+
+window.reassignDesign = async function(designId, newUser) {
+  if (!state.connected) { toast('Not connected', 'error'); return; }
+  try {
+    const { data: rawDesigns, sha } = await readJSON('db/designs.json');
+    const designs = rawDesigns.map(migrateDesign);
+    const idx = designs.findIndex(d => d.id === designId);
+    if (idx >= 0) designs[idx].assigned_to = newUser;
+    await writeJSON('db/designs.json', designs, `Reassign ${designId} to ${newUser}`, sha);
+    state.designs = designs; cacheData(); renderVault();
+    toast(`Reassigned to ${newUser} ✓`, 'success');
+  } catch(e) { toast(`Reassign failed: ${e.message}`, 'error'); }
+};
+
+// ═══════════════════════════════════════════════════
+// IMAGE UPLOAD (versioned)
+// ═══════════════════════════════════════════════════
+window.handleImageUpload = async function(event, designId, vNum) {
+  const files = Array.from(event.target.files || []);
+  if (!files.length) return;
+
+  const rawDesign = state.designs.find(d => d.id === designId);
+  if (!rawDesign) return;
+  const design = migrateDesign(rawDesign);
+  const ver = getVer(design, vNum) || getActiveVer(design);
+  const targetV = ver?.v ?? vNum;
+
+  for (const file of files) {
+    if (file.size > 5 * 1024 * 1024) toast(`Warning: ${file.name} > 5MB — upload may be slow`, 'info');
+
+    await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const dataUrl = e.target.result;
+        const base64  = dataUrl.split(',')[1];
+
+        toast(`Uploading ${file.name}…`, 'info');
+        try {
+          // Use current images count as index for filename
+          const currentDesign = migrateDesign(state.designs.find(d => d.id === designId));
+          const currentVer = getVer(currentDesign, targetV) || getActiveVer(currentDesign);
+          const imgIdx = (currentVer?.images?.length || 0) + 1;
+          const ext = file.name.split('.').pop().toLowerCase() || 'png';
+          const imagePath = `images/${design.driver_slug}_${design.product_type}_v${targetV}_${imgIdx}.${ext}`;
+
+          let existingSha = null;
+          try { const ex = await ghRequest('GET', imagePath); existingSha = ex.sha; } catch(_) {}
+          await uploadImage(imagePath, base64, existingSha);
+
+          const { data: rawDesigns, sha: designsSha } = await readJSON('db/designs.json');
+          const designs = rawDesigns.map(migrateDesign);
+          const idx = designs.findIndex(d => d.id === designId);
+          if (idx >= 0) {
+            const targetVer = getVer(designs[idx], targetV);
+            if (targetVer) {
+              if (!targetVer.images) targetVer.images = [];
+              targetVer.images.push(imagePath);
+              targetVer.status = 'image_uploaded';
+            }
+            const activeVer = getActiveVer(designs[idx]);
+            designs[idx].status = activeVer?.status || 'image_uploaded';
+          }
+          await writeJSON('db/designs.json', designs,
+            `Upload image v${targetV} #${imgIdx}: ${design.driver_slug} ${design.product_type}`, designsSha);
+
+          state.designs = designs; cacheData(); renderVault();
+          renderModal(designs[idx], targetV);
+          toast(`Image ${imgIdx} uploaded ✓`, 'success');
+        } catch(e) {
+          toast(`Upload failed: ${e.message}`, 'error');
+        }
+        resolve();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+};
+
+// Quick upload from vault card
+window.quickUpload = function(event, designId, vNum) {
+  handleImageUpload(event, designId, vNum);
+};
+
+// ═══════════════════════════════════════════════════
+// DOWNLOAD IMAGE (versioned)
+// ═══════════════════════════════════════════════════
+window.downloadImage = async function(imagePath, filename) {
+  if (!imagePath) { toast('No image path provided', 'error'); return; }
+  try {
+    const data = await ghRequest('GET', imagePath);
+    const base64 = data.content.replace(/\n/g, '');
+    const ext = imagePath.split('.').pop() || 'png';
+    const blob = await (await fetch(`data:image/${ext};base64,${base64}`)).blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename || imagePath.split('/').pop();
+    a.click(); URL.revokeObjectURL(url);
+  } catch(e) {
+    toast(`Download failed: ${e.message}`, 'error');
+  }
+};
+
+window.deleteImageFromVersion = async function(designId, vNum, imgIndex) {
+  if (!confirm('Remove this image from the version? (File stays in GitHub, only the reference is removed.)')) return;
+  const { data: rawDesigns, sha } = await readJSON('db/designs.json');
+  const designs = rawDesigns.map(migrateDesign);
+  const idx = designs.findIndex(d => d.id === designId);
+  if (idx < 0) return;
+  const ver = getVer(designs[idx], vNum);
+  if (ver) {
+    ver.images.splice(imgIndex, 1);
+    if (ver.images.length === 0) ver.status = 'prompt_ready';
+    const activeVer = getActiveVer(designs[idx]);
+    designs[idx].status = activeVer?.status || designs[idx].status;
+  }
+  await writeJSON('db/designs.json', designs, `Remove image ${imgIndex} from v${vNum}: ${designId}`, sha);
+  state.designs = designs; cacheData(); renderVault();
+  renderModal(designs[idx], vNum);
+  toast('Image removed from version', 'success');
+};
+
+// ═══════════════════════════════════════════════════
+// SAVE NOTES (versioned)
+// ═══════════════════════════════════════════════════
+window.saveNotes = async function(designId, vNum) {
+  if (!state.connected) { toast('Not connected to GitHub', 'error'); return; }
+  const notes = $('modal-notes')?.value || '';
+  try {
+    const { data: rawDesigns, sha } = await readJSON('db/designs.json');
+    const designs = rawDesigns.map(migrateDesign);
+    const idx = designs.findIndex(d => d.id === designId);
+    if (idx >= 0) {
+      const ver = getVer(designs[idx], vNum);
+      if (ver) ver.notes = notes;
+    }
+    await writeJSON('db/designs.json', designs, `Update notes v${vNum}: ${designId}`, sha);
+    state.designs = designs; cacheData();
+    toast('Notes saved', 'success');
+  } catch(e) {
+    toast(`Save failed: ${e.message}`, 'error');
+  }
+};
+
+// ═══════════════════════════════════════════════════
+// MARK APPROVED (versioned)
+// ═══════════════════════════════════════════════════
+window.markApproved = async function(designId, vNum) {
+  if (!state.connected) { toast('Not connected to GitHub', 'error'); return; }
+  try {
+    const { data: rawDesigns, sha } = await readJSON('db/designs.json');
+    const designs = rawDesigns.map(migrateDesign);
+    const idx = designs.findIndex(d => d.id === designId);
+    if (idx >= 0) {
+      const ver = getVer(designs[idx], vNum);
+      if (ver) {
+        if ((ver.images?.length || 0) === 0) { toast('Upload at least one image before approving', 'error'); return; }
+        ver.status = 'approved';
+      }
+      if (designs[idx].active_version === vNum) designs[idx].status = 'approved';
+    }
+    await writeJSON('db/designs.json', designs, `Approve v${vNum}: ${designId}`, sha);
+    state.designs = designs; cacheData(); renderVault();
+    renderModal(designs[idx], vNum);
+    toast(`v${vNum} approved ✓`, 'success');
+  } catch(e) {
+    toast(`Failed: ${e.message}`, 'error');
+  }
+};
+
+// ═══════════════════════════════════════════════════
+// JUMP TO GENERATOR
+// ═══════════════════════════════════════════════════
+window.jumpToGenerator = function(driverSlug, productType) {
+  closeModal();
+  switchTab(1);
+  // Set team
+  const driver = state.drivers.find(d => d.slug === driverSlug);
+  if (driver) {
+    $('team-select').value = driver.team;
+    state.selectedTeam = driver.team;
+    filterDriverDropdown('driver-select', driver.team);
+    $('driver-select').value = driverSlug;
+    selectProduct(productType);
+    prefillForm(driver);
+  }
+};
+
+// ═══════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════
+window.switchTab = function(n) {
+  state.currentTab = n;
+  [1, 2, 3, 4].forEach(i => {
+    $(`tab-${i}`)?.classList.toggle('hidden', n !== i);
+    const btn = $(`tab-btn-${i}`);
+    if (btn) {
+      btn.classList.toggle('tab-active',  n === i);
+      btn.classList.toggle('tab-inactive', n !== i);
+    }
+  });
+};
+
+// ═══════════════════════════════════════════════════
+// CONFIG PANEL
+// ═══════════════════════════════════════════════════
+window.toggleConfig = function() {
+  $('config-panel').classList.toggle('hidden');
+};
+
+// ═══════════════════════════════════════════════════
+// USER SELECT
+// ═══════════════════════════════════════════════════
+$('user-select').addEventListener('change', e => {
+  state.currentUser = e.target.value;
+  e.target.style.borderColor = '';
+});
+
+// ═══════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════
+let toastTimeout;
+window.toast = function(msg, type = 'info') {
+  const el = $('toast');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${{ success:'✓', error:'✗', info:'ℹ' }[type] || 'ℹ'}</span><span>${msg}</span>`;
+  el.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => el.classList.remove('show'), 3500);
+};
+
+// ═══════════════════════════════════════════════════
+// DOT STATUS
+// ═══════════════════════════════════════════════════
+function setDot(status, label) {
+  const dot = $('connect-dot');
+  const lbl = $('connect-label');
+  dot.className = `connect-dot dot-${status}`;
+  lbl.textContent = label;
+}
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+function $(id) { return document.getElementById(id); }
+function v(id) { return document.getElementById(id)?.value?.trim() || ''; }
+function sv(id, val) { const el = document.getElementById(id); if (el) el.value = val ?? ''; }
+
+// ═══════════════════════════════════════════════════
+// DEV TAB — secret unlock (triple-click version text)
+// ═══════════════════════════════════════════════════
+let devClickCount = 0, devClickTimer;
+window.handleDevClick = function() {
+  devClickCount++;
+  clearTimeout(devClickTimer);
+  devClickTimer = setTimeout(() => { devClickCount = 0; }, 600);
+  if (devClickCount >= 3) {
+    devClickCount = 0;
+    const btn = $('tab-btn-4');
+    const isVisible = !btn.classList.contains('hidden');
+    btn.classList.toggle('hidden', isVisible);
+    if (!isVisible) {
+      switchTab(4);
+      loadJSONEditors();
+      toast('JSON Editor unlocked', 'info');
+    } else {
+      if (state.currentTab === 4) switchTab(1);
+    }
+  }
+};
+
+async function loadJSONEditors() {
+  const files = ['drivers', 'designs', 'assignments'];
+  for (const name of files) {
+    const statusEl = $(`${name}-json-status`);
+    statusEl.textContent = 'loading…';
+    try {
+      const path = `db/${name}.json`;
+      const { data } = await readJSON(path);
+      $(`json-editor-${name}`).value = JSON.stringify(data, null, 2);
+      statusEl.textContent = `✓ loaded`;
+      statusEl.style.color = '#34d399';
+    } catch(e) {
+      // Fall back to in-memory state
+      const inMem = name === 'drivers' ? state.drivers : name === 'designs' ? state.designs : state.assignments;
+      $(`json-editor-${name}`).value = JSON.stringify(inMem, null, 2);
+      statusEl.textContent = '(from cache)';
+      statusEl.style.color = '#C9A84C';
+    }
+  }
+}
+
+window.validateJSON = function(name) {
+  const el = $(`json-editor-${name}`);
+  const statusEl = $(`${name}-json-status`);
+  try {
+    JSON.parse(el.value);
+    statusEl.textContent = '✓ valid JSON';
+    statusEl.style.color = '#34d399';
+    el.style.borderColor = '#34d39933';
+    setTimeout(() => { el.style.borderColor = ''; }, 2000);
+  } catch(e) {
+    statusEl.textContent = `✗ ${e.message}`;
+    statusEl.style.color = '#E8002D';
+    el.style.borderColor = '#E8002D';
+    toast(`Invalid JSON in ${name}.json — ${e.message}`, 'error');
+  }
+};
+
+window.formatJSON = function(name) {
+  const el = $(`json-editor-${name}`);
+  try {
+    const parsed = JSON.parse(el.value);
+    el.value = JSON.stringify(parsed, null, 2);
+    toast(`${name}.json formatted`, 'success');
+  } catch(e) {
+    toast(`Cannot format — invalid JSON: ${e.message}`, 'error');
+  }
+};
+
+window.saveJSONFile = async function(name) {
+  if (!state.connected) { toast('Not connected to GitHub', 'error'); return; }
+  const el = $(`json-editor-${name}`);
+  const statusEl = $(`${name}-json-status`);
+  let parsed;
+  try {
+    parsed = JSON.parse(el.value);
+  } catch(e) {
+    toast(`Invalid JSON — fix errors before saving`, 'error'); return;
+  }
+
+  statusEl.textContent = 'saving…';
+  statusEl.style.color = '#C9A84C';
+
+  try {
+    const path = `db/${name}.json`;
+    const { sha } = await readJSON(path);
+    await writeJSON(path, parsed, `Edit ${name}.json via JSON editor`, sha);
+    // Update in-memory state
+    if (name === 'drivers')     { state.drivers = parsed; populateDriverDropdowns(); }
+    if (name === 'designs')     { state.designs = parsed; renderVault(); }
+    if (name === 'assignments') { state.assignments = parsed; }
+    cacheData();
+    statusEl.textContent = '✓ saved';
+    statusEl.style.color = '#34d399';
+    toast(`${name}.json saved to GitHub ✓`, 'success');
+  } catch(e) {
+    statusEl.textContent = '✗ save failed';
+    statusEl.style.color = '#E8002D';
+    if (e.message.includes('conflict') || e.message.includes('SHA')) {
+      toast('Save conflict — reload the editor and retry', 'error');
+    } else {
+      toast(`Save failed: ${e.message}`, 'error');
+    }
+  }
+};
+
+// ─── Template editor ───────────────────────────────
+window.switchTemplateEditor = function() {
+  const edition = $('tmpl-edition')?.value || 'driver';
+  const product = $('tmpl-product')?.value || 'tshirt';
+  const allT = getTemplates();
+  const text = allT[edition]?.[product] || '';
+  $('template-editor-content').value = text;
+};
+
+window.saveTemplateFile = async function() {
+  if (!state.connected) { toast('Not connected to GitHub', 'error'); return; }
+  const edition = $('tmpl-edition')?.value || 'driver';
+  const product = $('tmpl-product')?.value || 'tshirt';
+  const content = $('template-editor-content')?.value || '';
+  const statusEl = $('templates-json-status');
+
+  // Merge into current templates
+  const allT = getTemplates();
+  if (!allT[edition]) allT[edition] = {};
+  allT[edition][product] = content;
+  state.templates = allT;
+
+  statusEl.textContent = 'saving…'; statusEl.style.color = '#C9A84C';
+  try {
+    const { sha } = await readJSON('db/templates.json');
+    await writeJSON('db/templates.json', allT, `Update ${edition}/${product} template`, sha);
+    cacheData();
+    statusEl.textContent = '✓ saved'; statusEl.style.color = '#34d399';
+    toast(`${edition} ${product} template saved ✓`, 'success');
+    assemblePrompt(); // live-refresh prompt preview if on Tab 1
+  } catch(e) {
+    statusEl.textContent = '✗ failed'; statusEl.style.color = '#E8002D';
+    toast(`Save failed: ${e.message}`, 'error');
+  }
+};
+
+window.resetTemplateToDefault = function() {
+  const edition = $('tmpl-edition')?.value || 'driver';
+  const product = $('tmpl-product')?.value || 'tshirt';
+  const defaults = { driver: DRIVER_TEMPLATES, championship: CHAMP_TEMPLATES };
+  const text = defaults[edition]?.[product] || '';
+  $('template-editor-content').value = text;
+  toast(`Reset to default — click SAVE to persist`, 'info');
+};
+
+// ═══════════════════════════════════════════════════
+// CROP TOOL
+// ═══════════════════════════════════════════════════
+const cropState = {
+  designId: null, vNum: null, imgIndex: 0,
+  regions: [], // {type, x, y, w, h} in canvas coords
+  currentType: 'front',
+  drawing: false, startX: 0, startY: 0,
+  imgNaturalW: 0, imgNaturalH: 0,
+  imgEl: null,
+};
+const TYPE_COLORS = { front: 'rgba(232,0,45,0.45)', back: 'rgba(0,144,255,0.45)', sleeve: 'rgba(201,168,76,0.45)' };
+const TYPE_BORDER = { front: '#E8002D', back: '#0090FF', sleeve: '#C9A84C' };
+
+window.openCropModal = function(designId, vNum, imgIndex) {
+  const rawDesign = state.designs.find(d => d.id === designId);
+  if (!rawDesign) return;
+  const design = migrateDesign(rawDesign);
+  const ver = getVer(design, vNum) || getActiveVer(design);
+  if (!ver || !ver.images || ver.images.length === 0) { toast('No images in this version', 'error'); return; }
+
+  cropState.designId = designId;
+  cropState.vNum     = vNum;
+  cropState.regions  = [];
+  cropState.currentType = 'front';
+  cropState._allImages  = ver.images; // keep reference for strip
+
+  // Show the modal first so offsetWidth is valid
+  $('crop-modal').classList.remove('hidden');
+
+  // Build image selector strip (only when >1 image)
+  const strip = $('crop-img-strip');
+  const thumbs = $('crop-img-thumbs');
+  if (ver.images.length > 1) {
+    strip.classList.remove('hidden');
+    thumbs.innerHTML = ver.images.map((p, i) => `
+      <button id="crop-thumb-${i}" onclick="switchCropImage(${i})"
+        class="shrink-0 rounded border-2 transition-all overflow-hidden focus:outline-none"
+        style="width:80px;height:60px;border-color:${i === imgIndex ? '#E8002D' : '#2a2a2a'}">
+        <img src="https://raw.githubusercontent.com/${state.owner}/${state.repo}/main/${p}?t=${Date.now()}"
+          class="w-full h-full object-cover"
+          onerror="this.style.display='none'" />
+      </button>`).join('');
+  } else {
+    strip.classList.add('hidden');
+  }
+
+  loadCropImage(imgIndex);
+};
+
+window.switchCropImage = function(imgIndex) {
+  // Update thumb highlight
+  (cropState._allImages || []).forEach((_, i) => {
+    const btn = $(`crop-thumb-${i}`);
+    if (btn) btn.style.borderColor = i === imgIndex ? '#E8002D' : '#2a2a2a';
+  });
+  cropState.regions = []; // clear regions when switching image
+  updateCropList();
+  loadCropImage(imgIndex);
+};
+
+function loadCropImage(imgIndex) {
+  const images = cropState._allImages;
+  if (!images || !images[imgIndex]) { toast('Image not found', 'error'); return; }
+  cropState.imgIndex = imgIndex;
+
+  const imgPath = `https://raw.githubusercontent.com/${state.owner}/${state.repo}/main/${images[imgIndex]}?t=${Date.now()}`;
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    cropState.imgEl = img;
+    cropState.imgNaturalW = img.naturalWidth;
+    cropState.imgNaturalH = img.naturalHeight;
+    const canvas = $('crop-canvas');
+    const wrap = $('crop-canvas-wrap');
+    const displayW = Math.max(wrap.offsetWidth, 400);
+    const scale = displayW / img.naturalWidth;
+    canvas.width  = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    canvas.style.width  = displayW + 'px';
+    canvas.style.height = Math.round(img.naturalHeight * scale) + 'px';
+    drawCropCanvas();
+    setCropType(cropState.currentType || 'front');
+    bindCropEvents();
+  };
+  img.onerror = () => toast('Could not load image — check GitHub connection', 'error');
+  img.src = imgPath;
+}
+
+window.closeCropModal = function() {
+  $('crop-modal').classList.add('hidden');
+  unbindCropEvents();
+  cropState._allImages = null;
+  cropState.regions = [];
+  updateCropList();
+};
+
+function bindCropEvents() {
+  unbindCropEvents(); // always clean up first to avoid duplicate listeners
+  const c = $('crop-canvas');
+  c.addEventListener('mousedown', onCropMouseDown);
+  c.addEventListener('mousemove', onCropMouseMove);
+  c.addEventListener('mouseup',   onCropMouseUp);
+}
+function unbindCropEvents() {
+  const c = $('crop-canvas');
+  if (!c) return;
+  c.removeEventListener('mousedown', onCropMouseDown);
+  c.removeEventListener('mousemove', onCropMouseMove);
+  c.removeEventListener('mouseup',   onCropMouseUp);
+}
+
+function getCanvasPos(e) {
+  const c = $('crop-canvas');
+  const rect = c.getBoundingClientRect();
+  const scaleX = c.width  / rect.width;
+  const scaleY = c.height / rect.height;
+  return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+}
+
+function onCropMouseDown(e) {
+  const pos = getCanvasPos(e);
+  cropState.drawing = true; cropState.startX = pos.x; cropState.startY = pos.y;
+}
+function onCropMouseMove(e) {
+  if (!cropState.drawing) return;
+  const pos = getCanvasPos(e);
+  drawCropCanvas({ x: cropState.startX, y: cropState.startY, w: pos.x - cropState.startX, h: pos.y - cropState.startY, type: cropState.currentType });
+}
+function onCropMouseUp(e) {
+  if (!cropState.drawing) return;
+  cropState.drawing = false;
+  const pos = getCanvasPos(e);
+  const w = pos.x - cropState.startX, h = pos.y - cropState.startY;
+  if (Math.abs(w) > 10 && Math.abs(h) > 10) {
+    const r = { type: cropState.currentType, x: Math.min(cropState.startX, pos.x), y: Math.min(cropState.startY, pos.y), w: Math.abs(w), h: Math.abs(h) };
+    cropState.regions.push(r);
+  }
+  drawCropCanvas();
+  updateCropList();
+}
+
+function drawCropCanvas(activeRect = null) {
+  const c = $('crop-canvas');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  if (cropState.imgEl) ctx.drawImage(cropState.imgEl, 0, 0);
+  // Draw saved regions
+  cropState.regions.forEach((r, i) => {
+    ctx.fillStyle = TYPE_COLORS[r.type];
+    ctx.fillRect(r.x, r.y, r.w, r.h);
+    ctx.strokeStyle = TYPE_BORDER[r.type];
+    ctx.lineWidth = 2;
+    ctx.strokeRect(r.x, r.y, r.w, r.h);
+    ctx.fillStyle = TYPE_BORDER[r.type];
+    ctx.font = 'bold 14px monospace';
+    ctx.fillText(`${r.type.toUpperCase()} #${i+1}`, r.x + 4, r.y + 16);
+  });
+  // Draw active drag rect
+  if (activeRect) {
+    ctx.fillStyle = TYPE_COLORS[activeRect.type];
+    ctx.fillRect(activeRect.x, activeRect.y, activeRect.w, activeRect.h);
+    ctx.strokeStyle = TYPE_BORDER[activeRect.type];
+    ctx.lineWidth = 2;
+    ctx.strokeRect(activeRect.x, activeRect.y, activeRect.w, activeRect.h);
+  }
+}
+
+function updateCropList() {
+  const el = $('crop-regions-list');
+  if (!cropState.regions.length) { el.innerHTML = '<span class="text-[#333]">No regions marked yet</span>'; return; }
+  el.innerHTML = cropState.regions.map((r, i) =>
+    `<div class="flex items-center gap-2 py-0.5">
+      <span class="w-2 h-2 rounded-sm" style="background:${TYPE_BORDER[r.type]}"></span>
+      <span class="text-[#888]">${r.type.toUpperCase()} #${i+1}</span>
+      <span class="text-[#444]">${Math.round(r.w)}×${Math.round(r.h)}px</span>
+      <button onclick="removeCropRegion(${i})" class="text-[#555] hover:text-[#E8002D] ml-auto">✕</button>
+    </div>`
+  ).join('');
+}
+
+window.setCropType = function(type) {
+  cropState.currentType = type;
+  ['front','back','sleeve'].forEach(t => {
+    const btn = $(`crop-type-${t}`);
+    if (!btn) return;
+    if (t === type) {
+      btn.style.borderColor = TYPE_BORDER[t];
+      btn.style.color = TYPE_BORDER[t];
+      btn.style.background = TYPE_COLORS[t];
+    } else {
+      btn.style.borderColor = '#2a2a2a';
+      btn.style.color = '#555';
+      btn.style.background = '';
+    }
+  });
+};
+
+window.clearCropRegions = function() { cropState.regions = []; drawCropCanvas(); updateCropList(); };
+window.removeCropRegion = function(i) { cropState.regions.splice(i, 1); drawCropCanvas(); updateCropList(); };
+
+window.saveCrops = async function() {
+  if (!cropState.regions.length) { toast('Mark at least one region first', 'error'); return; }
+  if (!state.connected) { toast('Not connected to GitHub', 'error'); return; }
+
+  const design = migrateDesign(state.designs.find(d => d.id === cropState.designId));
+  const driver = state.drivers.find(d => d.slug === design.driver_slug) || {};
+  const teamSlug = (driver.team || 'unknown').toLowerCase().replace(/\s+/g,'-');
+  const isChamp = driver.is_championship_edition ? 'champ' : 'driver';
+  const baseSlug = `${teamSlug}_${design.driver_slug}_${isChamp}`;
+  const vNum = cropState.vNum;
+
+  const typeCount = { front: 0, back: 0, sleeve: 0 };
+  const savedPaths = [];
+  const offscreen = document.createElement('canvas');
+  const octx = offscreen.getContext('2d');
+
+  for (const region of cropState.regions) {
+    typeCount[region.type]++;
+    const n = typeCount[region.type];
+    offscreen.width  = Math.round(region.w);
+    offscreen.height = Math.round(region.h);
+    octx.clearRect(0, 0, offscreen.width, offscreen.height);
+    octx.drawImage(cropState.imgEl, region.x, region.y, region.w, region.h, 0, 0, region.w, region.h);
+
+    const dataUrl = offscreen.toDataURL('image/png');
+    const base64  = dataUrl.split(',')[1];
+    const filename = `images/crops/${baseSlug}_v${vNum}_${region.type}_${n}.png`;
+
+    try {
+      let existingSha = null;
+      try { const ex = await ghRequest('GET', filename); existingSha = ex.sha; } catch(_) {}
+      await uploadImage(filename, base64, existingSha);
+      savedPaths.push(filename);
+      toast(`Saved ${region.type} #${n}`, 'success');
+    } catch(e) {
+      toast(`Failed to save ${region.type} #${n}: ${e.message}`, 'error');
+    }
+  }
+
+  if (savedPaths.length > 0) {
+    // Write paths back into the design version record
+    try {
+      const { data: rawDesigns, sha } = await readJSON('db/designs.json');
+      const designs = rawDesigns.map(migrateDesign);
+      const idx = designs.findIndex(d => d.id === cropState.designId);
+      if (idx >= 0) {
+        const ver = getVer(designs[idx], vNum);
+        if (ver) {
+          if (!ver.crops) ver.crops = [];
+          ver.crops.push(...savedPaths);
+        }
+      }
+      await writeJSON('db/designs.json', designs, `Save crops v${vNum}: ${cropState.designId}`, sha);
+      state.designs = designs; cacheData();
+      // Refresh vault and re-render modal with updated crops
+      renderVault();
+      renderModal(designs[idx], vNum);
+    } catch(e) { /* crops uploaded fine, just couldn't update record */ }
+
+    toast(`${savedPaths.length} crop${savedPaths.length !== 1 ? 's' : ''} saved ✓`, 'success');
+    closeCropModal();
+  }
+};
+
+// Patch loadJSONEditors to also init the template editor
+const _loadJSONEditorsBase = loadJSONEditors;
+loadJSONEditors = async function() {
+  await _loadJSONEditorsBase();
+  const statusEl = $('templates-json-status');
+  if (statusEl) { statusEl.textContent = 'loaded'; statusEl.style.color = '#34d399'; }
+  switchTemplateEditor();
+};
+
+// ═══════════════════════════════════════════════════
+// INIT — restore session
+// ═══════════════════════════════════════════════════
+(function init() {
+  // Pre-fill owner/repo but leave PAT blank
+  $('cfg-owner').value = 'AyushGupta97';
+  $('cfg-repo').value  = 'F1_design';
+
+  const pat   = sessionStorage.getItem('f1_pat');
+  const owner = sessionStorage.getItem('f1_owner') || 'AyushGupta97';
+  const repo  = sessionStorage.getItem('f1_repo')  || 'F1_design';
+  $('cfg-owner').value = owner;
+  $('cfg-repo').value  = repo;
+
+  if (pat) {
+    $('cfg-pat').value = pat;
+    connectGitHub();
+  } else {
+    tryLoadCache();
+    $('config-panel').classList.remove('hidden');
+  }
+  // Hide champ years on load (driver mode default)
+  const champRow = $('champ-years-row');
+  if (champRow) champRow.style.display = 'none';
+  // Initial prompt assembly
+  assemblePrompt();
+})();
+
+</script>
+</body>
+</html>
