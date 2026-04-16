@@ -267,7 +267,7 @@
       "secondary": "#999999"
     },
     "championship_years": [],
-    "unique_element": "NÃ¼rburgring Nordschleife outline as fine-line graphic",
+    "unique_element": "NÃÂ¼rburgring Nordschleife outline as fine-line graphic",
     "front_badge_default": "original fan-art German eagle wings in fine-line art",
     "is_championship_edition": false
   },
@@ -321,8 +321,8 @@
   },
   {
     "slug": "perez",
-    "display_name": "Sergio PÃ©rez",
-    "last_name": "PÃ©rez",
+    "display_name": "Sergio Perez",
+    "last_name": "Perez",
     "nickname": "CHECO",
     "number": 11,
     "team": "Cadillac",
@@ -353,7 +353,7 @@
   },
   {
     "slug": "hamilton_champ",
-    "display_name": "Lewis Hamilton â Championship Edition",
+    "display_name": "Lewis Hamilton Ã¢ÂÂ Championship Edition",
     "last_name": "Hamilton",
     "nickname": "THE GOAT",
     "number": 1,
@@ -377,7 +377,7 @@
   },
   {
     "slug": "verstappen_champ",
-    "display_name": "Max Verstappen â Championship Edition",
+    "display_name": "Max Verstappen Ã¢ÂÂ Championship Edition",
     "last_name": "Verstappen",
     "nickname": "SUPER MAX",
     "number": 1,
@@ -398,7 +398,7 @@
   },
   {
     "slug": "alonso_champ",
-    "display_name": "Fernando Alonso â Championship Edition",
+    "display_name": "Fernando Alonso Ã¢ÂÂ Championship Edition",
     "last_name": "Alonso",
     "nickname": "EL PLAN",
     "number": 1,
@@ -417,7 +417,7 @@
   },
   {
     "slug": "norris_champ",
-    "display_name": "Lando Norris â Championship Edition",
+    "display_name": "Lando Norris Ã¢ÂÂ Championship Edition",
     "last_name": "Norris",
     "nickname": "THE PAPERBOY",
     "number": 1,
