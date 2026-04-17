@@ -1008,8 +1008,18 @@ async function ghRequest(method, path, body = null) {
 
 async function readJSON(path) {
   const data = await ghRequest('GET', path);
-  const content = atob(data.content.replace(/\n/g, ''));
-  return { data: JSON.parse(content), sha: data.sha };
+  let text;
+  if (data.content) {
+    // Normal path — properly reverse the encodeURIComponent/unescape encoding used on write
+    text = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+  } else if (data.download_url) {
+    // File >1MB: contents API returns empty content — fetch raw instead
+    const res = await fetch(data.download_url + '?t=' + Date.now());
+    text = await res.text();
+  } else {
+    throw new Error(`Cannot read ${path} — no content or download_url`);
+  }
+  return { data: JSON.parse(text), sha: data.sha };
 }
 
 async function writeJSON(path, jsonData, message, sha = null) {
