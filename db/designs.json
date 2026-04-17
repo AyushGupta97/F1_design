@@ -5,17 +5,15 @@
     "product_type": "tshirt",
     "assigned_to": "Ayush",
     "active_version": 1,
-    "status": "image_uploaded",
+    "status": "prompt_ready",
     "versions": [
       {
         "v": 1,
-        "prompt_text": "Flat lay product mockup of a black oversized boxy fit t-shirt (drop shoulders, wide sleeves, slightly cropped length) on a neutral gray background, showing front and back views side by side. Premium heavyweight cotton texture. No official team logos, badges, or trademarked insignia anywhere on the garment.\n\nFRONT: On the LEFT CHEST ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ small clean typography \"Verstappen ÃÂÃÂÃÂÃÂ· 3\" with \"Verstappen\" in white and \"3\" in #1E41FF. Directly below in very small fine-print accent text: \"SUPER MAX\" in gold italics. Thin horizontal accent line in white and gold extending slightly outward. On the RIGHT CHEST ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ original fan-art Dutch lion silhouette in fine-line navy and orange (original fan-created artistic graphic, not an official reproduction). Crew neck with slightly thick ribbing.\n\nBACK: TOP ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ \"SUPER MAX\" in large bold spaced-out white letters as the hero text. CENTER ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ large bold \"3\" in #1E41FF. Overlapping the number on one side ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Zandvoort circuit layout as fine-line graphic as the original artistic graphic element. Diagonal racing streaks in #1E41FF and #FFD700 slicing across dynamically. original fan-art Dutch lion silhouette in fine-line navy and orange. BOTTOM ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ \"Red Bull Racing\" in plain neutral sans-serif white type (no logo, no official branding style replication) with a thin #1E41FF underline.\n\nStyle direction:  All graphic elements are original artistic interpretations inspired by the driver's identity. This is an independent fan art creation not affiliated with, endorsed by, or licensed by Formula 1, the FIA, or any Formula 1 team. No official logos or licensed marks.",
-        "images": [
-          "images/verstappen_tshirt_v1_1.png"
-        ],
+        "prompt_text": "Flat lay product mockup of a black oversized boxy fit t-shirt (drop shoulders, wide sleeves, slightly cropped length) on a neutral gray background, showing front and back views side by side. Premium heavyweight cotton texture. No official team logos, badges, or trademarked insignia anywhere on the garment.\n\nFRONT: On the LEFT CHEST ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ small clean typography \"Verstappen ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· 3\" with \"Verstappen\" in white and \"3\" in #1E41FF. Directly below in very small fine-print accent text: \"SUPER MAX\" in gold italics. Thin horizontal accent line in white and gold extending slightly outward. On the RIGHT CHEST ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ original fan-art Dutch lion silhouette in fine-line navy and orange (original fan-created artistic graphic, not an official reproduction). Crew neck with slightly thick ribbing.\n\nBACK: TOP ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"SUPER MAX\" in large bold spaced-out white letters as the hero text. CENTER ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ large bold \"3\" in #1E41FF. Overlapping the number on one side ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Zandvoort circuit layout as fine-line graphic as the original artistic graphic element. Diagonal racing streaks in #1E41FF and #FFD700 slicing across dynamically. original fan-art Dutch lion silhouette in fine-line navy and orange. BOTTOM ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"Red Bull Racing\" in plain neutral sans-serif white type (no logo, no official branding style replication) with a thin #1E41FF underline.\n\nStyle direction:  All graphic elements are original artistic interpretations inspired by the driver's identity. This is an independent fan art creation not affiliated with, endorsed by, or licensed by Formula 1, the FIA, or any Formula 1 team. No official logos or licensed marks.",
+        "images": [],
         "created_by": "Ayush",
         "created_at": "2026-04-17T00:45:14.772Z",
-        "status": "image_uploaded",
+        "status": "prompt_ready",
         "notes": "",
         "_fields": {
           "last_name": "Verstappen",
