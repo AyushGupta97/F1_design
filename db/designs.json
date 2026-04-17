@@ -32,7 +32,15 @@
           "tee_color": "black",
           "is_champ_edition": false
         },
-        "crops": []
+        "crops": [
+          "images/crops/red-bull-racing_verstappen_driver_v1_front_1.png",
+          "images/crops/red-bull-racing_verstappen_driver_v1_front_2.png",
+          "images/crops/red-bull-racing_verstappen_driver_v1_back_1.png",
+          "images/crops/red-bull-racing_verstappen_driver_v1_back_2.png",
+          "images/crops/red-bull-racing_verstappen_driver_v1_back_3.png",
+          "images/crops/red-bull-racing_verstappen_driver_v1_back_4.png",
+          "images/crops/red-bull-racing_verstappen_driver_v1_sleeve_1.png"
+        ]
       }
     ]
   }
